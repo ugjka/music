@@ -23,8 +23,14 @@ func main() {
 		fmt.Fprintf(os.Stderr, "ERROR: Do not run this as root")
 		return
 	}
+	db, filemap, err := (getSongs(*path))
+	if err != nil {
+		panic(err)
+	}
 	mux := httprouter.New()
 	mux.NotFound = http.FileServer(http.Dir("public"))
+	mux.HandlerFunc("GET", "/list", byTitle(db).list)
+	mux.HandlerFunc("GET", "/stream", getStream(filemap))
 	fmt.Printf("Serving over: http://127.0.0.1:%d\n", *port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), mux))
 
