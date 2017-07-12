@@ -9,6 +9,6 @@ type song struct {
 	path   string
 }
 
-type byTitle []song
-type byArtist []song
-type byAlbum []song
+type byTitle []*song
+type byArtist []*song
+type byAlbum []*song
