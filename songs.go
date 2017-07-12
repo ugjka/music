@@ -123,16 +123,23 @@ func getStream(filemap map[string]string) http.HandlerFunc {
 
 func getAPI(songs []*song) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		switch r.URL.Query().Get("sort") {
 		case "bytitle":
 			sort.Sort(byTitle(songs))
-			json.NewEncoder(w).Encode(songs)
+			enc := json.NewEncoder(w)
+			enc.SetIndent("", " ")
+			enc.Encode(songs)
 		case "byartist":
 			sort.Sort(byArtist(songs))
-			json.NewEncoder(w).Encode(songs)
+			enc := json.NewEncoder(w)
+			enc.SetIndent("", " ")
+			enc.Encode(songs)
 		case "byalbum":
 			sort.Sort(byAlbum(songs))
-			json.NewEncoder(w).Encode(songs)
+			enc := json.NewEncoder(w)
+			enc.SetIndent("", " ")
+			enc.Encode(songs)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
