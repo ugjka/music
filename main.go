@@ -31,6 +31,7 @@ func main() {
 	mux.NotFound = http.FileServer(http.Dir("public"))
 	mux.HandlerFunc("GET", "/list", byTitle(db).list)
 	mux.HandlerFunc("GET", "/stream", getStream(filemap))
+	mux.HandlerFunc("GET", "/api", getAPI(db))
 	fmt.Printf("Serving over: http://127.0.0.1:%d\n", *port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), mux))
 

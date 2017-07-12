@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"sort"
 	"text/tabwriter"
 )
 
@@ -20,6 +22,78 @@ type song struct {
 type byTitle []*song
 type byArtist []*song
 type byAlbum []*song
+
+func (songs byTitle) Len() int {
+	return len(songs)
+}
+
+func (songs byArtist) Len() int {
+	return len(songs)
+}
+
+func (songs byAlbum) Len() int {
+	return len(songs)
+}
+
+func (songs byTitle) Swap(i, j int) {
+	songs[i], songs[j] = songs[j], songs[i]
+}
+
+func (songs byArtist) Swap(i, j int) {
+	songs[i], songs[j] = songs[j], songs[i]
+}
+
+func (songs byAlbum) Swap(i, j int) {
+	songs[i], songs[j] = songs[j], songs[i]
+}
+
+func (songs byTitle) Less(i, j int) bool {
+	if songs[i].Title != songs[j].Title {
+		return songs[i].Title < songs[j].Title
+	}
+	if songs[i].Artist != songs[j].Artist {
+		return songs[i].Artist < songs[j].Artist
+	}
+	if songs[i].Album != songs[j].Album {
+		return songs[i].Album < songs[j].Album
+	}
+	if songs[i].Track != songs[j].Track {
+		return songs[i].Track < songs[j].Track
+	}
+	return false
+}
+
+func (songs byArtist) Less(i, j int) bool {
+	if songs[i].Artist != songs[j].Artist {
+		return songs[i].Artist < songs[j].Artist
+	}
+	if songs[i].Album != songs[j].Album {
+		return songs[i].Album < songs[j].Album
+	}
+	if songs[i].Track != songs[j].Track {
+		return songs[i].Track < songs[j].Track
+	}
+	if songs[i].Title != songs[j].Title {
+		return songs[i].Title < songs[j].Title
+	}
+	return false
+}
+
+func (songs byAlbum) Less(i, j int) bool {
+	if songs[i].Album != songs[j].Album {
+		return songs[i].Album < songs[j].Album
+	}
+	if songs[i].Artist != songs[j].Artist {
+		return songs[i].Artist < songs[j].Artist
+	}
+	if songs[i].Track != songs[j].Track {
+		return songs[i].Track < songs[j].Track
+	}
+	if songs[i].Title != songs[j].Title {
+		return songs[i].Title < songs[j].Title
+	}
+	return false
+}
 
 func (db byTitle) list(w http.ResponseWriter, req *http.Request) {
 	tw := new(tabwriter.Writer).Init(w, 0, 8, 2, ' ', 0)
@@ -43,6 +117,24 @@ func getStream(filemap map[string]string) http.HandlerFunc {
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 			return
+		}
+	}
+}
+
+func getAPI(songs []*song) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Query().Get("sort") {
+		case "bytitle":
+			sort.Sort(byTitle(songs))
+			json.NewEncoder(w).Encode(songs)
+		case "byartist":
+			sort.Sort(byArtist(songs))
+			json.NewEncoder(w).Encode(songs)
+		case "byalbum":
+			sort.Sort(byAlbum(songs))
+			json.NewEncoder(w).Encode(songs)
+		default:
+			w.WriteHeader(http.StatusNotFound)
 		}
 	}
 }
