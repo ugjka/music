@@ -15,7 +15,7 @@ var srvlog = log.New("module", "app/server")
 
 func main() {
 	port := flag.Uint("port", 8080, "Server Port")
-	path := flag.String("path", "./music", "Directotry containing your mp3 files")
+	path := flag.String("path", "./music", "Directory containing your mp3 files")
 	flag.Parse()
 	if *port > 65535 {
 		fmt.Fprintf(os.Stderr, "ERROR: Invalid port number\n")
