@@ -1,4 +1,4 @@
 public/bower_components/*
 music/
 music
-cache/*
+cache.json

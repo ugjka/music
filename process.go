@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,8 +10,29 @@ import (
 )
 
 func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
+	cache := make(map[string]song)
+	cachef, err := os.OpenFile("cache.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	defer cachef.Close()
+	err = json.NewDecoder(cachef).Decode(&cache)
+	if err != nil {
+		srvlog.Warn("could not decode cache json", "error", err)
+	}
 	filemap = make(map[string]string)
 	filepath.Walk(searchdir, func(path string, finfo os.FileInfo, err error) error {
+		if v, ok := cache[path]; ok {
+			songs = append(songs, &v)
+			filemap[v.ID] = path
+			return nil
+		}
+		if finfo.IsDir() {
+			return nil
+		}
+		if finfo.Name() == ".directory" {
+			return nil
+		}
 		if !strings.HasSuffix(path, ".mp3") {
 			srvlog.Info("skipping non-mp3 file", "file", finfo.Name())
 			return nil
@@ -36,8 +58,19 @@ func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
 			return nil
 		}
 		filemap[hash] = path
-		songs = append(songs, &song{Artist: artist, Title: title, Album: album, Track: track, ID: hash, path: path})
+		result := &song{Artist: artist, Title: title, Album: album, Track: track, ID: hash, path: path}
+		songs = append(songs, result)
+		cache[path] = *result
 		return nil
 	})
+	err = cachef.Truncate(0)
+	if err != nil {
+		srvlog.Warn("could not truncate cache file", "error", err)
+		return
+	}
+	err = json.NewEncoder(cachef).Encode(cache)
+	if err != nil {
+		srvlog.Warn("could not encode cache json", "error", err)
+	}
 	return
 }
