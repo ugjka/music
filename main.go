@@ -4,12 +4,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/julienschmidt/httprouter"
+	log "gopkg.in/inconshreveable/log15.v2"
 )
+
+var srvlog = log.New("module", "app/server")
 
 func main() {
 	port := flag.Uint("port", 8080, "Server Port")
@@ -23,16 +25,13 @@ func main() {
 		fmt.Fprintf(os.Stderr, "ERROR: Do not run this as root")
 		return
 	}
-	db, filemap, err := (getSongs(*path))
-	if err != nil {
-		panic(err)
-	}
+	songs, filemap := (getSongs(*path))
 	mux := httprouter.New()
 	mux.NotFound = http.FileServer(http.Dir("public"))
-	mux.HandlerFunc("GET", "/list", byTitle(db).list)
 	mux.HandlerFunc("GET", "/stream", getStream(filemap))
-	mux.HandlerFunc("GET", "/api", getAPI(db))
+	mux.HandlerFunc("GET", "/api", getAPI(songs))
 	fmt.Printf("Serving over: http://127.0.0.1:%d\n", *port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), mux))
+	err := http.ListenAndServe(fmt.Sprintf(":%d", *port), mux)
+	srvlog.Crit("server crashed", "error", err)
 
 }

@@ -2,12 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"sort"
-	"text/tabwriter"
 )
 
 type song struct {
@@ -95,25 +92,16 @@ func (songs byAlbum) Less(i, j int) bool {
 	return false
 }
 
-func (db byTitle) list(w http.ResponseWriter, req *http.Request) {
-	tw := new(tabwriter.Writer).Init(w, 0, 8, 2, ' ', 0)
-	for _, v := range db {
-		fmt.Fprintf(tw, "%v\t%v\t%v\t%v\t%v\t\n", v.Artist, v.Title, v.Album, v.Track, v.ID)
-	}
-	tw.Flush()
-}
-
 func getStream(filemap map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if v, ok := filemap[r.URL.Query().Get("hash")]; ok {
-			f, err := os.Open(v)
+		if v, ok := filemap[r.URL.Query().Get("id")]; ok {
+			_, err := os.Stat(v)
 			if err != nil {
+				srvlog.Crit("file missing", "file", v)
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
-			defer f.Close()
-			w.Header().Set("Content-Type", "audio/mpeg")
-			io.Copy(w, f)
+			http.ServeFile(w, r, v)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 			return
