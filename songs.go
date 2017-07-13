@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"regexp"
@@ -111,25 +113,55 @@ func getStream(filemap map[string]string) http.HandlerFunc {
 	}
 }
 
+var sortcache = make(map[string][]byte)
+
 func getAPI(songs []*song) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		var err error
 		switch r.URL.Query().Get("sort") {
 		case "bytitle":
-			sort.Sort(byTitle(songs))
-			enc := json.NewEncoder(w)
-			enc.SetIndent("", " ")
-			enc.Encode(songs)
+			if v, ok := sortcache["bytitle"]; !ok {
+				sort.Sort(byTitle(songs))
+				enc := json.NewEncoder(w)
+				enc.SetIndent("", " ")
+				enc.Encode(songs)
+				sortcache["bytitle"], err = json.MarshalIndent(songs, "", " ")
+				if err != nil {
+					srvlog.Crit("marshaling cache by title failed", "error", err)
+					delete(sortcache, "bytitle")
+				}
+			} else {
+				io.Copy(w, bytes.NewReader(v))
+			}
 		case "byartist":
-			sort.Sort(byArtist(songs))
-			enc := json.NewEncoder(w)
-			enc.SetIndent("", " ")
-			enc.Encode(songs)
+			if v, ok := sortcache["byartist"]; !ok {
+				sort.Sort(byArtist(songs))
+				enc := json.NewEncoder(w)
+				enc.SetIndent("", " ")
+				enc.Encode(songs)
+				sortcache["byartist"], err = json.MarshalIndent(songs, "", " ")
+				if err != nil {
+					srvlog.Crit("marshaling cache by artist failed", "error", err)
+					delete(sortcache, "byartist")
+				}
+			} else {
+				io.Copy(w, bytes.NewReader(v))
+			}
 		case "byalbum":
-			sort.Sort(byAlbum(songs))
-			enc := json.NewEncoder(w)
-			enc.SetIndent("", " ")
-			enc.Encode(songs)
+			if v, ok := sortcache["byalbum"]; !ok {
+				sort.Sort(byAlbum(songs))
+				enc := json.NewEncoder(w)
+				enc.SetIndent("", " ")
+				enc.Encode(songs)
+				sortcache["byalbum"], err = json.MarshalIndent(songs, "", " ")
+				if err != nil {
+					srvlog.Crit("marshaling cache by album failed", "error", err)
+					delete(sortcache, "byalbum")
+				}
+			} else {
+				io.Copy(w, bytes.NewReader(v))
+			}
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
