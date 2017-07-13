@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
+	"regexp"
 	"sort"
 )
 
@@ -132,4 +134,20 @@ func getAPI(songs []*song) http.HandlerFunc {
 			w.WriteHeader(http.StatusNotFound)
 		}
 	}
+}
+
+func artwork(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	reg := regexp.MustCompile("^\\w+$")
+	if !reg.MatchString(id) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	file := fmt.Sprintf("./artcache/%s", id)
+	_, err := os.Stat(file)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	http.ServeFile(w, r, file)
 }

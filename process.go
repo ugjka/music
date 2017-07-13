@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -56,6 +59,14 @@ func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
 		if err != nil {
 			srvlog.Warn("could not hash the file", "file", finfo.Name())
 			return nil
+		}
+		if m.Picture() != nil {
+			art, err := os.OpenFile(fmt.Sprintf("./artcache/%s", hash), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+			if err != nil {
+				panic(err)
+			}
+			io.Copy(art, bytes.NewReader(m.Picture().Data))
+			art.Close()
 		}
 		filemap[hash] = path
 		result := &song{Artist: artist, Title: title, Album: album, Track: track, ID: hash, path: path}
