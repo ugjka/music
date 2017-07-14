@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"sort"
+	"sync"
 )
 
 type song struct {
@@ -115,6 +116,8 @@ func getStream(filemap map[string]string) http.HandlerFunc {
 
 var sortcache = make(map[string][]byte)
 
+var apiMutex sync.Mutex
+
 func getAPI(songs []*song) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -122,11 +125,13 @@ func getAPI(songs []*song) http.HandlerFunc {
 		switch r.URL.Query().Get("sort") {
 		case "bytitle":
 			if v, ok := sortcache["bytitle"]; !ok {
+				apiMutex.Lock()
 				sort.Sort(byTitle(songs))
 				enc := json.NewEncoder(w)
 				enc.SetIndent("", " ")
 				enc.Encode(songs)
 				sortcache["bytitle"], err = json.MarshalIndent(songs, "", " ")
+				apiMutex.Unlock()
 				if err != nil {
 					srvlog.Crit("marshaling cache by title failed", "error", err)
 					delete(sortcache, "bytitle")
@@ -136,11 +141,13 @@ func getAPI(songs []*song) http.HandlerFunc {
 			}
 		case "byartist":
 			if v, ok := sortcache["byartist"]; !ok {
+				apiMutex.Lock()
 				sort.Sort(byArtist(songs))
 				enc := json.NewEncoder(w)
 				enc.SetIndent("", " ")
 				enc.Encode(songs)
 				sortcache["byartist"], err = json.MarshalIndent(songs, "", " ")
+				apiMutex.Unlock()
 				if err != nil {
 					srvlog.Crit("marshaling cache by artist failed", "error", err)
 					delete(sortcache, "byartist")
@@ -150,11 +157,13 @@ func getAPI(songs []*song) http.HandlerFunc {
 			}
 		case "byalbum":
 			if v, ok := sortcache["byalbum"]; !ok {
+				apiMutex.Lock()
 				sort.Sort(byAlbum(songs))
 				enc := json.NewEncoder(w)
 				enc.SetIndent("", " ")
 				enc.Encode(songs)
 				sortcache["byalbum"], err = json.MarshalIndent(songs, "", " ")
+				apiMutex.Unlock()
 				if err != nil {
 					srvlog.Crit("marshaling cache by album failed", "error", err)
 					delete(sortcache, "byalbum")
