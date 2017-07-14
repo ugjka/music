@@ -1,0 +1,17 @@
+{
+  "name": "music",
+  "homepage": "https://github.com/ugjka/music",
+  "authors": [
+    "ugjka <ugis.germanis@gmail.com>"
+  ],
+  "description": "music streaming app",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "SoundManager2": "soundmanager2#*",
+    "polymer": "^2.0.1",
+    "app-layout": "PolymerElements/app-layout#^2.0.1",
+    "jquery": "^3.2.1"
+  }
+}
