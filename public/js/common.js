@@ -21,9 +21,12 @@ window.addEventListener('WebComponentsReady', function(e) {
         sorter[i].addEventListener("change", function(e){
             music.selected = e.target.id
             for(j=0; j<sorter.length; j++){
+                if (sorter[j].id == e.target.id) {
+                    continue
+                }
                 sorter[j].active=false;
             }
-            document.getElementById(music.selected).active=true;
+            e.target.active=true;
             document.dispatchEvent(music.sort);
         }, false);
     }
