@@ -2,34 +2,35 @@
 	Ugis Germanis
 */
 
-    body {
-      margin: 0;
-      font-family: 'Roboto', 'Noto', sans-serif;
-      background-color: #eee;
-    }
-    #startDrawer {
-      --app-drawer-content-container: {
-        box-shadow: 1px 0 2px 1px rgba(0,0,0,0.18);
-      }
-    }
-    #endDrawer {
-      --app-drawer-content-container: {
-        box-shadow: -1px 0 2px 1px rgba(0,0,0,0.18);
-      }
-    }
-    app-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: #4285f4;
-      color: #fff;
-    }
-    app-header paper-icon-button {
-      --paper-icon-button-ink-color: white;
+body {
+	margin: 0;
+	font-family: 'Roboto', 'Noto', sans-serif;
+	background-color: #eee;
+}
+
+#startDrawer {
+	--app-drawer-content-container: {
+	box-shadow: 1px 0 2px 1px rgba(0,0,0,0.18);
 	}
+}
+#endDrawer {
+	--app-drawer-content-container: {
+	box-shadow: -1px 0 2px 1px rgba(0,0,0,0.18);
+	}
+}
+app-header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-color: #4285f4;
+	color: #fff;
+}
+app-header paper-icon-button {
+    --paper-icon-button-ink-color: white;
+}
 	
-	paper-button {
+paper-button {
     font-family: 'Roboto', 'Noto', sans-serif;
     font-weight: normal;
     font-size: 14px;
@@ -41,8 +42,8 @@
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-  }
+}
 
-  paper-button[active] {
+paper-button[active] {
     background-color: var(--paper-red-500);
-  }
+}
