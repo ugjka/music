@@ -7,7 +7,7 @@ var music = {
 };
 
 document.addEventListener("sort", function(e){
-    console.log("Raw: ", music.selected);
+    console.log("sort event: ", music.selected);
 }, false)
 
 window.addEventListener('WebComponentsReady', function(e) {
