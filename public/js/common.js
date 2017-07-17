@@ -3,9 +3,8 @@
 
 var music = {
     selected: "byartist",
+    sort: new Event('sort'),
 };
-
-var sort = new Event('sort');
 
 document.addEventListener("sort", function(e){
     console.log("Raw: ", music.selected);
@@ -13,28 +12,28 @@ document.addEventListener("sort", function(e){
 
 window.addEventListener('WebComponentsReady', function(e) {
     console.log('components ready');
-    artist.addEventListener("change", function(e){
-        if (artist.active == true){
-            song.active=false;
-            album.active=false;
+    byartist.addEventListener("change", function(e){
+        if (byartist.active == true){
+            bytitle.active=false;
+            byalbum.active=false;
             music.selected="byartist";
-            document.dispatchEvent(sort);
+            document.dispatchEvent(music.sort);
         }
     }, false);
-    song.addEventListener("change", function(e){
-        if (song.active == true) {
-            artist.active=false;
-            album.active=false;
-            music.selected="bysong";
-            document.dispatchEvent(sort);
+    bytitle.addEventListener("change", function(e){
+        if (bytitle.active == true) {
+            byartist.active=false;
+            byalbum.active=false;
+            music.selected="bytitle";
+            document.dispatchEvent(music.sort);
         }
     }, false);
-    album.addEventListener("change", function(e){
-        if (album.active == true) {
-            artist.active=false;
-            song.active=false;
+    byalbum.addEventListener("change", function(e){
+        if (byalbum.active == true) {
+            byartist.active=false;
+            bytitle.active=false;
             music.selected="byalbum";
-            document.dispatchEvent(sort);    
+            document.dispatchEvent(music.sort);    
         }
     }, false);
 });
