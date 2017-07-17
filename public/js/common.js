@@ -19,7 +19,7 @@ window.addEventListener('WebComponentsReady', function(e) {
     var sorter = document.getElementsByClassName("sorter");
     for (i=0; i< sorter.length; i++) {
         sorter[i].addEventListener("change", function(e){
-            music.selected = e.path[0].id
+            music.selected = e.target.id
             for(j=0; j<sorter.length; j++){
                 sorter[j].active=false;
             }
