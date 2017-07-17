@@ -13,11 +13,6 @@ body {
 	box-shadow: 1px 0 2px 1px rgba(0,0,0,0.18);
 	}
 }
-#endDrawer {
-	--app-drawer-content-container: {
-	box-shadow: -1px 0 2px 1px rgba(0,0,0,0.18);
-	}
-}
 app-header {
 	position: fixed;
 	top: 0;
