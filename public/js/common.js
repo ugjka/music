@@ -11,29 +11,20 @@ document.addEventListener("sort", function(e){
 }, false)
 
 window.addEventListener('WebComponentsReady', function(e) {
-    console.log('components ready');
-    byartist.addEventListener("change", function(e){
-        if (byartist.active == true){
-            bytitle.active=false;
-            byalbum.active=false;
-            music.selected="byartist";
+    console.log('webcomponents are ready!!!');
+    //Init the default
+    document.getElementById(music.selected).active=true;
+    document.dispatchEvent(music.sort);
+    //Nifty button stuff
+    var sorter = document.getElementsByClassName("sorter");
+    for (i=0; i< sorter.length; i++) {
+        sorter[i].addEventListener("change", function(e){
+            music.selected = e.path[0].id
+            for(j=0; j<sorter.length; j++){
+                sorter[j].active=false;
+            }
+            document.getElementById(music.selected).active=true;
             document.dispatchEvent(music.sort);
-        }
-    }, false);
-    bytitle.addEventListener("change", function(e){
-        if (bytitle.active == true) {
-            byartist.active=false;
-            byalbum.active=false;
-            music.selected="bytitle";
-            document.dispatchEvent(music.sort);
-        }
-    }, false);
-    byalbum.addEventListener("change", function(e){
-        if (byalbum.active == true) {
-            byartist.active=false;
-            bytitle.active=false;
-            music.selected="byalbum";
-            document.dispatchEvent(music.sort);    
-        }
-    }, false);
+        }, false);
+    }
 });
