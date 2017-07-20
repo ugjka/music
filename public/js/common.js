@@ -19,7 +19,6 @@ window.addEventListener('WebComponentsReady', function(e) {
     var sorter = document.getElementsByClassName("sorter");
     for (i=0; i< sorter.length; i++) {
         sorter[i].addEventListener("change", function(e){
-            music.selected = e.target.id
             for(j=0; j<sorter.length; j++){
                 if (sorter[j].id == e.target.id) {
                     continue
@@ -27,6 +26,10 @@ window.addEventListener('WebComponentsReady', function(e) {
                 sorter[j].active=false;
             }
             e.target.active=true;
+            if (music.selected == e.target.id){
+                return
+            }
+            music.selected = e.target.id
             document.dispatchEvent(music.sort);
         }, false);
     }
