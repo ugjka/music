@@ -1,7 +1,6 @@
 /* My css styling
 	Ugis Germanis
 */
-
 body {
 	margin: 0;
 	font-family: 'Roboto', 'Noto', sans-serif;
@@ -43,10 +42,27 @@ paper-button[active] {
     background-color: var(--paper-red-500);
 }
 
+footer {
+	position: fixed;
+	height: 100px;
+	left: 0;
+	bottom: 0;
+	right: 0;
+    background-color: #4285f4;
+}
+
 #playlist {
 	padding-top: 120px;
+	padding-bottom: 100px;
 }
 
 [playing=true] {
 	background-color: red;
+}
+
+#slider {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 95%;
 }

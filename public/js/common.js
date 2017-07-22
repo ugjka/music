@@ -8,6 +8,7 @@ var music = {
     request: new XMLHttpRequest(),
     url: document.location.protocol+ "//"+ window.location.host,
     current: 0,
+    slider: null,
     render: function(){
         $("#playlist").empty();
         for (i=0; i<this.playlist.length; i++) {
@@ -38,6 +39,7 @@ document.addEventListener("sort", function(e){
 window.addEventListener('WebComponentsReady', function(e) {
     console.log('webcomponents are ready!!!');
     //Init the default
+    music.slider = document.getElementById("slider");
     document.getElementById(music.selected).active=true;
     document.dispatchEvent(music.sort);
     //Nifty button stuff
@@ -67,7 +69,7 @@ function playSong(id){
         url: music.url+ "/stream?id="+ music.playlist[id].ID,
         multiShot:false,
         onfinish: function() {
-            if (music.current == music.playlist.length) {
+            if (music.current === music.playlist.length) {
                 music.current = 0;
             } else {
                 music.current++;
@@ -79,6 +81,10 @@ function playSong(id){
         onstop: function(){
             $("#"+id).attr("playing", false);
             this.destruct();
+        },
+        whileplaying: function(){
+            console.log((this.position / this.durationEstimate) * 100);
+            music.slider.value = (this.position / this.durationEstimate) * 1000;
         },
     });
     $("#"+id).attr("playing", true);
