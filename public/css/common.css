@@ -42,3 +42,11 @@ paper-button {
 paper-button[active] {
     background-color: var(--paper-red-500);
 }
+
+#playlist {
+	padding-top: 120px;
+}
+
+[playing=true] {
+	background-color: red;
+}
