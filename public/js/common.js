@@ -12,9 +12,11 @@ var music = {
     sliderDrag: false,
     render: function(){
         $("#playlist").empty();
+        var playlist = "";
         for (i=0; i<this.playlist.length; i++) {
-            $("#playlist").append("<li id='sound"+i+"' class='song' index='"+i+"'>"+ this.playlist[i].Title+ " - "+ this.playlist[i].Artist +"</li>");
+            playlist = playlist.concat("<li id='sound"+i+"' class='song' index='"+i+"'>"+ this.playlist[i].Title+ " - "+ this.playlist[i].Artist +"</li>");
         }
+        $("#playlist").append(playlist);
         document.getElementById("playlist").addEventListener('click', function(e){
             if(e.target && e.target.nodeName == "LI") {
                 music.current= e.target.getAttribute("index");
