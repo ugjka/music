@@ -14,10 +14,11 @@ var music = {
         $("#playlist").empty();
         for (i=0; i<this.playlist.length; i++) {
             $("#playlist").append("<li class='song'></li>");
-            $(".song").last().attr('id', i);
+            $(".song").last().attr('id', "sound"+i);
+            $(".song").last().attr('index', i);
             $(".song").last().append(this.playlist[i].Title+ " - "+ this.playlist[i].Artist);
-            document.getElementById(i).addEventListener('click', function(e){
-                music.current= e.target.id;
+            document.getElementById("sound"+i).addEventListener('click', function(e){
+                music.current= e.target.getAttribute("index");
                 playSong(music.current);
             });
         }
@@ -87,11 +88,11 @@ function playSong(id){
                 music.current++;
             }
             playSong(music.current);
-            $("#"+id).attr("playing", false);
+            $("#sound"+id).attr("playing", false);
             this.destruct();
         },
         onstop: function(){
-            $("#"+id).attr("playing", false);
+            $("#sound"+id).attr("playing", false);
             this.destruct();
         },
         whileplaying: function(){
@@ -100,18 +101,26 @@ function playSong(id){
             }
         },
     });
-    $("#"+id).attr("playing", true);
+    $("#sound"+id).attr("playing", true);
     soundManager.play("sound"+id);
     document.getElementsByTagName("body")[0].style.backgroundImage = "url("+music.url+"/art?id="+music.playlist[id].ID+")";
 }
 
 function playnext(){
-    music.current++;
+    if (music.current == (music.playlist.length - 1)) {
+        music.current = 0;
+    } else {
+        music.current++;
+    }
     playSong(music.current);
 }
 
 function playprevious(){
-    music.current--;
+    if (music.current == 0) {
+        music.current = music.playlist.length - 1
+    } else {
+        music.current--;
+    }
     playSong(music.current);
 }
 

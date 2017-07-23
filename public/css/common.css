@@ -39,6 +39,7 @@ app-header {
 	background-color: #4285f4;
 	color: #fff;
 }
+
 app-header paper-icon-button {
     --paper-icon-button-ink-color: white;
 }
