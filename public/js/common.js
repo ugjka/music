@@ -102,6 +102,7 @@ function playSong(id){
     });
     $("#"+id).attr("playing", true);
     soundManager.play("sound"+id);
+    document.getElementsByTagName("body")[0].style.backgroundImage = "url("+music.url+"/art?id="+music.playlist[id].ID+")";
 }
 
 function playnext(){

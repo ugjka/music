@@ -3,8 +3,27 @@
 */
 body {
 	margin: 0;
+	margin-left: 20px;
 	font-family: 'Roboto', 'Noto', sans-serif;
 	background-color: #eee;
+	background-position: center;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	position: relative;
+}
+
+body::after {
+	background-color: white;
+	content: "";
+	opacity: 0.6;
+	height: 100%;
+	width: 100%;
+	display: block;
+	z-index: -1;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;   
 }
 
 #startDrawer {
@@ -57,6 +76,14 @@ footer {
 }
 
 [playing=true] {
+	background-color: red;
+}
+
+.song:hover {
+	background-color: #ff9090;
+}
+
+[playing=true]:hover {
 	background-color: red;
 }
 
