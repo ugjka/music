@@ -28,7 +28,9 @@ var music = {
 music.request.onloadend = function(){
     if (this.readyState = 4 && this.status == 200) {
         music.playlist = JSON.parse(this.responseText);
+        $("#playlist").attr('loading', true);
         music.render();
+        $("#playlist").attr('loading', false);
     }
 }
 
