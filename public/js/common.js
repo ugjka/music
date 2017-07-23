@@ -13,16 +13,13 @@ var music = {
     render: function(){
         $("#playlist").empty();
         for (i=0; i<this.playlist.length; i++) {
-            $("#playlist").append("<li class='song'></li>");
-            $(".song").last().attr('id', "sound"+i);
-            $(".song").last().attr('index', i);
-            $(".song").last().append(this.playlist[i].Title+ " - "+ this.playlist[i].Artist);
+            $("#playlist").append("<li id='sound"+i+"' class='song' index='"+i+"'>"+ this.playlist[i].Title+ " - "+ this.playlist[i].Artist +"</li>");
         }
         document.getElementById("playlist").addEventListener('click', function(e){
-                if(e.target && e.target.nodeName == "LI") {
-                    music.current= e.target.getAttribute("index");
-                    playSong(music.current);
-                }
+            if(e.target && e.target.nodeName == "LI") {
+                music.current= e.target.getAttribute("index");
+                playSong(music.current);
+            }
         });
     },
 };
