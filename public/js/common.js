@@ -81,7 +81,7 @@ function playSong(id){
         url: music.url+ "/stream?id="+ music.playlist[id].ID,
         multiShot:false,
         onfinish: function() {
-            if (music.current === music.playlist.length) {
+            if (music.current == (music.playlist.length - 1)) {
                 music.current = 0;
             } else {
                 music.current++;
