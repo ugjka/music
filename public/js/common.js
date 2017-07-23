@@ -9,6 +9,7 @@ var music = {
     url: document.location.protocol+ "//"+ window.location.host,
     current: 0,
     slider: null,
+    sliderDrag: false,
     render: function(){
         $("#playlist").empty();
         for (i=0; i<this.playlist.length; i++) {
@@ -40,6 +41,17 @@ window.addEventListener('WebComponentsReady', function(e) {
     console.log('webcomponents are ready!!!');
     //Init the default
     music.slider = document.getElementById("slider");
+    slider.addEventListener("mousedown", function(){
+        music.sliderDrag = true;
+    });
+    slider.addEventListener("mouseup", function(){
+        music.sliderDrag = false;
+    });
+    slider.addEventListener("change", function(e){
+        var estimate = soundManager.getSoundById("sound"+music.current).durationEstimate;
+        soundManager.getSoundById("sound"+music.current).setPosition((estimate/1000) * e.target.value);
+        music.sliderDrag = false;
+    });
     document.getElementById(music.selected).active=true;
     document.dispatchEvent(music.sort);
     //Nifty button stuff
@@ -83,10 +95,33 @@ function playSong(id){
             this.destruct();
         },
         whileplaying: function(){
-            console.log((this.position / this.durationEstimate) * 100);
-            music.slider.value = (this.position / this.durationEstimate) * 1000;
+            if (music.sliderDrag == false){
+                music.slider.value = (this.position / this.durationEstimate) * 1000;
+            }
         },
     });
     $("#"+id).attr("playing", true);
     soundManager.play("sound"+id);
+}
+
+function playnext(){
+    music.current++;
+    playSong(music.current);
+}
+
+function playprevious(){
+    music.current--;
+    playSong(music.current);
+}
+
+function play(){
+    if (soundManager.getSoundById("sound"+music.current) === undefined){
+        playSong(music.current);
+    } else {
+        soundManager.getSoundById("sound"+music.current).resume();
+    }
+}
+
+function pause(){
+    soundManager.getSoundById("sound"+music.current).pause();
 }

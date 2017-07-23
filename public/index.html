@@ -59,6 +59,7 @@
 	<link rel="import" href="bower_components/app-layout/app-header/app-header.html">
 	<link rel="import" href="bower_components/app-layout/app-toolbar/app-toolbar.html">
 	<link rel="import" href="bower_components/paper-button/paper-button.html">
+	<link rel="import" href="bower_components/iron-icons/av-icons.html">
 
 	<!-- soundmanager js -->
 	<script src="bower_components/SoundManager2/script/soundmanager2.js"></script>
@@ -89,7 +90,13 @@
 	<ol id="playlist">
 	</ol>
 	<footer>
-		<input id="slider" type="range" min="0" max="1000" step="1"/>
+		<input id="slider" type="range" min="0" max="1000" step="1" value="0"/>
+		<div id="controls">
+			<paper-icon-button icon="av:skip-previous" onclick="playprevious()"></paper-icon-button>
+			<paper-icon-button icon="av:play-arrow" onclick="play()"></paper-icon-button>
+			<paper-icon-button icon="av:pause" onclick="pause()"></paper-icon-button>
+			<paper-icon-button icon="av:skip-next" onclick="playnext()"></paper-icon-button>
+		</div>
 	</footer>
 </body>	
 </html>
