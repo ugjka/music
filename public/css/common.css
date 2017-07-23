@@ -80,6 +80,10 @@ footer {
 	background-color: red;
 }
 
+.song {
+	white-space: nowrap;
+}
+
 .song:hover {
 	background-color: #ff9090;
 }
