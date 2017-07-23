@@ -64,7 +64,7 @@ paper-button[active] {
 
 footer {
 	position: fixed;
-	height: 100px;
+	height: 70px;
 	left: 0;
 	bottom: 0;
 	right: 0;
@@ -86,6 +86,10 @@ footer {
 
 [playing=true]:hover {
 	background-color: red;
+}
+
+[playing=true]::before {
+	content: "► ";
 }
 
 #slider {
