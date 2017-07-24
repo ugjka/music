@@ -34,10 +34,10 @@ window.addEventListener('WebComponentsReady', function(e) {
     document.getElementById("previous").addEventListener("click", function(e){
         playprevious();
     });
-    document.getElementById("play").addEventListener("click", function(e){
+    document.getElementById("playit").addEventListener("click", function(e){
         play();
     });
-    document.getElementById("pause").addEventListener("click", function(e){
+    document.getElementById("pauseit").addEventListener("click", function(e){
         pause();
     });
     //Sort event handler
