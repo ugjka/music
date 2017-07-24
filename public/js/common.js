@@ -62,7 +62,12 @@ window.addEventListener('WebComponentsReady', function(e) {
     var sorter = document.getElementById("startDrawer");
     sorter.addEventListener("change", function(e){
         if(e.target && e.target.nodeName == "PAPER-BUTTON") {
+            var sorters = document.getElementsByClassName("sorter");
+            for (i=0; sorters.length > i; i++){
+                sorters[i].active = false;
+            }
             music.selected = e.target.id.replace("post-", "");
+            e.target.active = true;
             document.dispatchEvent(music.sort);
         }
     }, false);
