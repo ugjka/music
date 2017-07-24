@@ -2,16 +2,22 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/julienschmidt/httprouter"
 	log "gopkg.in/inconshreveable/log15.v2"
 )
 
 var srvlog = log.New("module", "app/server")
+var playcountFile *os.File
+var sortcache = make(map[string][]byte)
+var playcount = make(map[string]int64)
+var apiMutex sync.Mutex
 
 func main() {
 	port := flag.Uint("port", 8080, "Server Port")
@@ -25,6 +31,15 @@ func main() {
 		fmt.Fprintf(os.Stderr, "ERROR: Do not run this as root")
 		return
 	}
+	var err error
+	playcountFile, err = os.OpenFile("playcount.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	err = json.NewDecoder(playcountFile).Decode(&playcount)
+	if err != nil {
+		srvlog.Warn("could not decode cache json", "error", err)
+	}
 	os.Mkdir("artcache", 0755)
 	songs, filemap := (getSongs(*path))
 	mux := httprouter.New()
@@ -33,7 +48,7 @@ func main() {
 	mux.HandlerFunc("GET", "/art", artwork)
 	mux.HandlerFunc("GET", "/api", getAPI(songs))
 	fmt.Printf("Serving over: http://127.0.0.1:%d\n", *port)
-	err := http.ListenAndServe(fmt.Sprintf(":%d", *port), mux)
+	err = http.ListenAndServe(fmt.Sprintf(":%d", *port), mux)
 	srvlog.Crit("server crashed", "error", err)
 
 }

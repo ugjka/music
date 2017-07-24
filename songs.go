@@ -10,7 +10,6 @@ import (
 	"os"
 	"regexp"
 	"sort"
-	"sync"
 	"time"
 )
 
@@ -26,6 +25,7 @@ type song struct {
 type byTitle []*song
 type byArtist []*song
 type byAlbum []*song
+type byLeast []*song
 
 func (songs byTitle) Len() int {
 	return len(songs)
@@ -39,6 +39,10 @@ func (songs byAlbum) Len() int {
 	return len(songs)
 }
 
+func (songs byLeast) Len() int {
+	return len(songs)
+}
+
 func (songs byTitle) Swap(i, j int) {
 	songs[i], songs[j] = songs[j], songs[i]
 }
@@ -48,6 +52,10 @@ func (songs byArtist) Swap(i, j int) {
 }
 
 func (songs byAlbum) Swap(i, j int) {
+	songs[i], songs[j] = songs[j], songs[i]
+}
+
+func (songs byLeast) Swap(i, j int) {
 	songs[i], songs[j] = songs[j], songs[i]
 }
 
@@ -99,15 +107,50 @@ func (songs byAlbum) Less(i, j int) bool {
 	return false
 }
 
+func (songs byLeast) Less(i, j int) bool {
+	var icount, jcount int64
+	if v, ok := playcount[songs[i].ID]; ok {
+		icount = v
+	} else {
+		icount = 0
+	}
+	if v, ok := playcount[songs[j].ID]; ok {
+		jcount = v
+	} else {
+		jcount = 0
+	}
+	if icount != jcount {
+		return icount < jcount
+	}
+	if songs[i].Artist != songs[j].Artist {
+		return songs[i].Artist < songs[j].Artist
+	}
+	if songs[i].Album != songs[j].Album {
+		return songs[i].Album < songs[j].Album
+	}
+	if songs[i].Track != songs[j].Track {
+		return songs[i].Track < songs[j].Track
+	}
+	if songs[i].Title != songs[j].Title {
+		return songs[i].Title < songs[j].Title
+	}
+	return false
+}
+
 func getStream(filemap map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if v, ok := filemap[r.URL.Query().Get("id")]; ok {
+		id := r.URL.Query().Get("id")
+		if v, ok := filemap[id]; ok {
 			_, err := os.Stat(v)
 			if err != nil {
 				srvlog.Crit("file missing", "file", v)
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
+			apiMutex.Lock()
+			playcount[id]++
+			savePlayCount()
+			apiMutex.Unlock()
 			http.ServeFile(w, r, v)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
@@ -115,10 +158,6 @@ func getStream(filemap map[string]string) http.HandlerFunc {
 		}
 	}
 }
-
-var sortcache = make(map[string][]byte)
-
-var apiMutex sync.Mutex
 
 func getAPI(songs []*song) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -184,6 +223,20 @@ func getAPI(songs []*song) http.HandlerFunc {
 			enc.SetIndent("", " ")
 			enc.Encode(songs)
 			apiMutex.Unlock()
+		case "byleast":
+			apiMutex.Lock()
+			sort.Sort(byLeast(songs))
+			enc := json.NewEncoder(w)
+			enc.SetIndent("", " ")
+			enc.Encode(songs)
+			apiMutex.Unlock()
+		case "bymost":
+			apiMutex.Lock()
+			sort.Sort(sort.Reverse(byLeast(songs)))
+			enc := json.NewEncoder(w)
+			enc.SetIndent("", " ")
+			enc.Encode(songs)
+			apiMutex.Unlock()
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -204,4 +257,14 @@ func artwork(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.ServeFile(w, r, file)
+}
+
+func savePlayCount() {
+	playcountFile.Truncate(0)
+	enc := json.NewEncoder(playcountFile)
+	enc.SetIndent("", " ")
+	err := enc.Encode(playcount)
+	if err != nil {
+		srvlog.Crit("could not encode playcount json", "error", err)
+	}
 }
