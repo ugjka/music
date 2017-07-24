@@ -1,6 +1,56 @@
 // Ugis Germanis
 // My javascript
-
+window.addEventListener('WebComponentsReady', function(e) {
+    console.log('webcomponents are ready!!!');
+    //Slider events
+    music.slider = document.getElementById("slider");
+    slider.addEventListener("mousedown", function(){
+        music.sliderDrag = true;
+    });
+    slider.addEventListener("mouseup", function(){
+        music.sliderDrag = false;
+    });
+    slider.addEventListener("change", function(e){
+        var estimate = soundManager.getSoundById("sound"+music.current).durationEstimate;
+        soundManager.getSoundById("sound"+music.current).setPosition((estimate/1000) * e.target.value);
+        music.sliderDrag = false;
+    });
+    //Sorter
+    document.getElementById("startDrawer").addEventListener("change", function(e){
+        if(e.target && e.target.nodeName == "PAPER-BUTTON") {
+            var sorters = document.getElementsByClassName("sorter");
+            for (i=0; sorters.length > i; i++){
+                sorters[i].active = false;
+            }
+            music.selected = e.target.id.replace("post-", "");
+            e.target.active = true;
+            document.dispatchEvent(music.sort);
+        }
+    }, false);
+    //Playback controls
+    document.getElementById("next").addEventListener("click", function(e){
+        playnext();
+    });
+    document.getElementById("previous").addEventListener("click", function(e){
+        playprevious();
+    });
+    document.getElementById("play").addEventListener("click", function(e){
+        play();
+    });
+    document.getElementById("pause").addEventListener("click", function(e){
+        pause();
+    });
+    //Sort event handler
+    document.addEventListener("sort", function(e){
+        console.log("sort event: ", music.selected);
+        music.request.open("GET", music.url + "/api?sort=" + music.selected);
+        music.request.send();
+    }, false);
+    //Default sort
+    document.getElementById(music.selected).active=true;
+    document.dispatchEvent(music.sort);
+});
+//Main object
 var music = {
     selected: "byartist",
     sort: new Event('sort'),
@@ -34,45 +84,7 @@ music.request.onloadend = function(){
         $("#playlist").attr('loading', false);
     }
 }
-
-document.addEventListener("sort", function(e){
-    console.log("sort event: ", music.selected);
-    music.request.open("GET", music.url + "/api?sort=" + music.selected);
-    music.request.send();
-}, false)
-
-window.addEventListener('WebComponentsReady', function(e) {
-    console.log('webcomponents are ready!!!');
-    //Init the default
-    music.slider = document.getElementById("slider");
-    slider.addEventListener("mousedown", function(){
-        music.sliderDrag = true;
-    });
-    slider.addEventListener("mouseup", function(){
-        music.sliderDrag = false;
-    });
-    slider.addEventListener("change", function(e){
-        var estimate = soundManager.getSoundById("sound"+music.current).durationEstimate;
-        soundManager.getSoundById("sound"+music.current).setPosition((estimate/1000) * e.target.value);
-        music.sliderDrag = false;
-    });
-    document.getElementById(music.selected).active=true;
-    document.dispatchEvent(music.sort);
-    //Sorter
-    var sorter = document.getElementById("startDrawer");
-    sorter.addEventListener("change", function(e){
-        if(e.target && e.target.nodeName == "PAPER-BUTTON") {
-            var sorters = document.getElementsByClassName("sorter");
-            for (i=0; sorters.length > i; i++){
-                sorters[i].active = false;
-            }
-            music.selected = e.target.id.replace("post-", "");
-            e.target.active = true;
-            document.dispatchEvent(music.sort);
-        }
-    }, false);
-});
-
+//Play song by id
 function playSong(id){
     soundManager.stopAll();
     soundManager.createSound({
@@ -103,7 +115,7 @@ function playSong(id){
     soundManager.play("sound"+id);
     document.getElementsByTagName("body")[0].style.backgroundImage = "url("+music.url+"/art?id="+music.playlist[id].ID+")";
 }
-
+//Playback functions
 function playnext(){
     if (music.current == (music.playlist.length - 1)) {
         music.current = 0;
