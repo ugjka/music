@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"os"
 	"regexp"
 	"sort"
 	"sync"
+	"time"
 )
 
 type song struct {
@@ -171,6 +173,17 @@ func getAPI(songs []*song) http.HandlerFunc {
 			} else {
 				io.Copy(w, bytes.NewReader(v))
 			}
+		case "byshuffle":
+			apiMutex.Lock()
+			rand.Seed(time.Now().UnixNano())
+			for i := len(songs) - 1; i > 0; i-- {
+				j := rand.Intn(i + 1)
+				songs[i], songs[j] = songs[j], songs[i]
+			}
+			enc := json.NewEncoder(w)
+			enc.SetIndent("", " ")
+			enc.Encode(songs)
+			apiMutex.Unlock()
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}

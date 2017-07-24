@@ -58,24 +58,14 @@ window.addEventListener('WebComponentsReady', function(e) {
     });
     document.getElementById(music.selected).active=true;
     document.dispatchEvent(music.sort);
-    //Nifty button stuff
-    var sorter = document.getElementsByClassName("sorter");
-    for (i=0; i< sorter.length; i++) {
-        sorter[i].addEventListener("change", function(e){
-            for(j=0; j<sorter.length; j++){
-                if (sorter[j].id == e.target.id) {
-                    continue
-                }
-                sorter[j].active=false;
-            }
-            e.target.active=true;
-            if (music.selected == e.target.id){
-                return
-            }
-            music.selected = e.target.id
+    //Sorter
+    var sorter = document.getElementById("startDrawer");
+    sorter.addEventListener("change", function(e){
+        if(e.target && e.target.nodeName == "PAPER-BUTTON") {
+            music.selected = e.target.id.replace("post-", "");
             document.dispatchEvent(music.sort);
-        }, false);
-    }
+        }
+    }, false);
 });
 
 function playSong(id){

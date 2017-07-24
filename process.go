@@ -36,8 +36,8 @@ func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
 		if finfo.Name() == ".directory" {
 			return nil
 		}
-		if !strings.HasSuffix(path, ".mp3") {
-			srvlog.Info("skipping non-mp3 file", "file", finfo.Name())
+		if !(strings.HasSuffix(path, ".mp3") || strings.HasSuffix(path, ".flac")) {
+			srvlog.Info("skipping invalid file", "file", finfo.Name())
 			return nil
 		}
 		f, err := os.Open(path)
