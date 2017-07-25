@@ -56,7 +56,7 @@ window.addEventListener('WebComponentsReady', function(e) {
         onready: function() {
             soundManager.createSound({
                 id: "main",
-                url: "http://music.ugjka.net/test.mp3",
+                url: "",
                 multiShot:false,
                 onfinish: function() {
                     $(["#sound", music.current].join("")).attr("playing", false);
