@@ -84,6 +84,20 @@ window.addEventListener('WebComponentsReady', function(e) {
     //Default sort
     document.getElementById(music.selected).active=true;
     document.dispatchEvent(music.sort);
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('nexttrack', function() {
+            playnext();
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', function() {
+            playprevious();
+        });
+        navigator.mediaSession.setActionHandler('play', function() {
+            play();
+        });
+        navigator.mediaSession.setActionHandler('pause', function() {
+            pause();
+        });
+    }
 });
 //Main object
 var music = {
@@ -129,7 +143,16 @@ function playSong(id){
     music.mainSound.url = [music.url, "/stream?id=", music.playlist[id].ID].join("");
     music.mainSound.play();
     document.getElementsByTagName("body")[0].style.backgroundImage = ["url(", music.url, "/art?id=", music.playlist[id].ID, ")"].join("");
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: music.playlist[music.current].Title,
+            artist: music.playlist[music.current].Artist,
+            album: music.playlist[music.current].Album,
+            artwork: [{ src: [music.url, "/art?id=", music.playlist[id].ID].join(""),}],
+        });
+    }
 }
+
 //Playback functions
 function playnext(){
     music.previous = music.current;
