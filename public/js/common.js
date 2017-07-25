@@ -11,8 +11,8 @@ window.addEventListener('WebComponentsReady', function(e) {
         music.sliderDrag = false;
     });
     slider.addEventListener("change", function(e){
-        var estimate = soundManager.getSoundById(["sound", music.current].join("")).durationEstimate;
-        soundManager.getSoundById(["sound", music.current].join("")).setPosition((estimate/1000) * e.target.value);
+        var estimate = music.mainSound.durationEstimate;
+        music.mainSound.setPosition((estimate/1000) * e.target.value);
         music.sliderDrag = false;
     });
     document.getElementById("menubutton").addEventListener("click", function(e){
@@ -48,6 +48,39 @@ window.addEventListener('WebComponentsReady', function(e) {
         music.request.open("GET", [music.url, "/api?sort=", music.selected].join(""));
         music.request.send();
     }, false);
+    //Init sound object
+    soundManager.setup({
+        url: 'bower_components/SoundManager2/swf/soundmanager2_flash9.swf',
+        flashVersion: 9,
+        preferFlash: false,
+        onready: function() {
+            soundManager.createSound({
+                id: "main",
+                url: "http://music.ugjka.net/test.mp3",
+                multiShot:false,
+                onfinish: function() {
+                    $(["#sound", music.current].join("")).attr("playing", false);
+                    if (music.current == (music.playlist.length - 1)) {
+                        music.current = 0;
+                    } else {
+                        music.current++;
+                    }
+                    this.unload();
+                    playSong(music.current);
+                },
+                onstop: function(){
+                    $(["#sound", music.previous].join("")).attr("playing", false);
+                    this.unload();
+                },
+                whileplaying: function(){
+                    if (music.sliderDrag == false){
+                        music.slider.value = (this.position / this.durationEstimate) * 1000;
+                    }
+                },
+            });
+            music.mainSound = soundManager.getSoundById("main");
+        }
+    });
     //Default sort
     document.getElementById(music.selected).active=true;
     document.dispatchEvent(music.sort);
@@ -57,9 +90,11 @@ var music = {
     selected: "byartist",
     sort: new Event('sort'),
     playlist: null,
+    mainSound: null,
     request: new XMLHttpRequest(),
     url: [document.location.protocol, "//", window.location.host].join(""),
     current: 0,
+    previous: 0,
     slider: null,
     sliderDrag: false,
     render: function(){
@@ -71,6 +106,7 @@ var music = {
         $("#playlist").append(playlist.join(""));
         document.getElementById("playlist").addEventListener('click', function(e){
             if(e.target && e.target.nodeName == "LI") {
+                music.previous = music.current;
                 music.current= e.target.getAttribute("index");
                 playSong(music.current);
             }
@@ -88,37 +124,15 @@ music.request.onloadend = function(){
 }
 //Play song by id
 function playSong(id){
-    soundManager.stopAll();
-    soundManager.createSound({
-        id: ["sound", id].join(""),
-        url: [music.url, "/stream?id=", music.playlist[id].ID].join(""),
-        multiShot:false,
-        onfinish: function() {
-            if (music.current == (music.playlist.length - 1)) {
-                music.current = 0;
-            } else {
-                music.current++;
-            }
-            playSong(music.current);
-            $(["#sound", id].join("")).attr("playing", false);
-            this.destruct();
-        },
-        onstop: function(){
-            $(["#sound", id].join("")).attr("playing", false);
-            this.destruct();
-        },
-        whileplaying: function(){
-            if (music.sliderDrag == false){
-                music.slider.value = (this.position / this.durationEstimate) * 1000;
-            }
-        },
-    });
+    music.mainSound.stop();
     $(["#sound", id].join("")).attr("playing", true);
-    soundManager.play(["sound", id].join(""));
+    music.mainSound.url = [music.url, "/stream?id=", music.playlist[id].ID].join("");
+    music.mainSound.play();
     document.getElementsByTagName("body")[0].style.backgroundImage = ["url(", music.url, "/art?id=", music.playlist[id].ID, ")"].join("");
 }
 //Playback functions
 function playnext(){
+    music.previous = music.current;
     if (music.current == (music.playlist.length - 1)) {
         music.current = 0;
     } else {
@@ -128,6 +142,7 @@ function playnext(){
 }
 
 function playprevious(){
+    music.previous = music.current;
     if (music.current == 0) {
         music.current = music.playlist.length - 1
     } else {
@@ -137,13 +152,13 @@ function playprevious(){
 }
 
 function play(){
-    if (soundManager.getSoundById(["sound", music.current].join("")) === undefined){
-        playSong(music.current);
+    if (music.mainSound.paused){
+        music.mainSound.resume();
     } else {
-        soundManager.getSoundById(["sound", music.current].join("")).resume();
+        playSong(music.current);
     }
 }
 
 function pause(){
-    soundManager.getSoundById(["sound", music.current].join("")).pause();
+    music.mainSound.pause();
 }
