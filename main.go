@@ -38,7 +38,7 @@ func main() {
 	}
 	err = json.NewDecoder(playcountFile).Decode(&playcount)
 	if err != nil {
-		srvlog.Warn("could not decode cache json", "error", err)
+		srvlog.Warn("could not decode playcount json", "error", err)
 	}
 	os.Mkdir("artcache", 0755)
 	songs, filemap := (getSongs(*path))
