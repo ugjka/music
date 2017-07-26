@@ -44,6 +44,7 @@ func main() {
 	songs, filemap := (getSongs(*path))
 	mux := httprouter.New()
 	mux.NotFound = http.FileServer(http.Dir("public"))
+	mux.HandlerFunc("GET", "/count", countPlay(playcount))
 	mux.HandlerFunc("GET", "/stream", getStream(filemap))
 	mux.HandlerFunc("GET", "/art", artwork)
 	mux.HandlerFunc("GET", "/api", getAPI(songs))

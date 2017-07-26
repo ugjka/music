@@ -137,6 +137,17 @@ func (songs byLeast) Less(i, j int) bool {
 	return false
 }
 
+func countPlay(playcount map[string]int64) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.URL.Query().Get("id")
+		fmt.Println("Counted: ", id)
+		apiMutex.Lock()
+		playcount[id]++
+		savePlayCount(playcount)
+		apiMutex.Unlock()
+	}
+}
+
 func getStream(filemap map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
@@ -147,10 +158,6 @@ func getStream(filemap map[string]string) http.HandlerFunc {
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
-			apiMutex.Lock()
-			playcount[id]++
-			savePlayCount()
-			apiMutex.Unlock()
 			http.ServeFile(w, r, v)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
@@ -259,7 +266,7 @@ func artwork(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, file)
 }
 
-func savePlayCount() {
+func savePlayCount(playcount map[string]int64) {
 	playcountFile.Truncate(0)
 	enc := json.NewEncoder(playcountFile)
 	enc.SetIndent("", " ")

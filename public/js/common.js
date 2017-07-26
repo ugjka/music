@@ -59,6 +59,7 @@ window.addEventListener('WebComponentsReady', function(e) {
                 url: "",
                 multiShot:false,
                 onfinish: function() {
+                    music.previous = music.current;
                     $(["#sound", music.current].join("")).attr("playing", false);
                     if (music.current == (music.playlist.length - 1)) {
                         music.current = 0;
@@ -67,6 +68,10 @@ window.addEventListener('WebComponentsReady', function(e) {
                     }
                     this.unload();
                     playSong(music.current);
+                    $.get(
+                        [music.url, "/count"].join(""),
+                        {"id" : music.playlist[music.previous].ID}
+                    );
                 },
                 onstop: function(){
                     $(["#sound", music.previous].join("")).attr("playing", false);
