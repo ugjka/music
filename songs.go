@@ -140,7 +140,6 @@ func (songs byLeast) Less(i, j int) bool {
 func countPlay(playcount map[string]int64) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
-		fmt.Println("Counted: ", id)
 		apiMutex.Lock()
 		playcount[id]++
 		savePlayCount(playcount)
