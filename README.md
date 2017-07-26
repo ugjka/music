@@ -1,6 +1,9 @@
 # music
 Online music player
 
+## demo
+http://music.ugjka.net/
+
 ## install instructions
 
 `go get -u github.com/ugjka/music`
