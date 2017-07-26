@@ -86,6 +86,8 @@
 		<paper-button class="sorter" id="bymost" toggles raised class="green">Sort By Most Played</paper-button>
 		<paper-button class="sorter" id="byleast" toggles raised class="green">Sort By Least Played</paper-button>
 		<paper-button class="sorter" id="byshuffle" toggles raised class="green">Shuffle</paper-button>
+		<paper-button class="sorter" id="byfavorite" toggles raised class="green">Favorites</paper-button>
+		<paper-button class="sorter" id="byfavshuffle" toggles raised class="green">Favorites Shuffled</paper-button>
 	</app-drawer>
 	<ol id="playlist" loading="true">
 	</ol>
@@ -96,6 +98,7 @@
 			<paper-icon-button icon="av:play-arrow" id="playit"></paper-icon-button>
 			<paper-icon-button icon="av:pause" id="pauseit"></paper-icon-button>
 			<paper-icon-button icon="av:skip-next" id="next"></paper-icon-button>
+			<paper-icon-button icon="icons:favorite" id="favorite" favorited="false"></paper-icon-button>
 		</div>
 	</footer>
 </body>	

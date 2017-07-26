@@ -101,7 +101,7 @@ footer {
 
 #controls {
 	display: block;
-	width: 200px;
+	width: 222px;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -111,4 +111,17 @@ footer {
 	text-align: center;
 	display: block;
 	width: 100%;
+}
+
+#favorite {
+	width: 33px;
+	height: 33px;
+}
+
+[favorited=true] {
+	color: red;
+}
+
+[favorited=false] {
+	color: black;
 }

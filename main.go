@@ -15,8 +15,10 @@ import (
 
 var srvlog = log.New("module", "app/server")
 var playcountFile *os.File
+var likedFile *os.File
 var sortcache = make(map[string][]byte)
 var playcount = make(map[string]int64)
+var liked = make(map[string]bool)
 var apiMutex sync.Mutex
 
 func main() {
@@ -40,6 +42,14 @@ func main() {
 	if err != nil {
 		srvlog.Warn("could not decode playcount json", "error", err)
 	}
+	likedFile, err = os.OpenFile("likes.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	err = json.NewDecoder(likedFile).Decode(&liked)
+	if err != nil {
+		srvlog.Warn("could not decode liked json", "error", err)
+	}
 	os.Mkdir("artcache", 0755)
 	songs, filemap := (getSongs(*path))
 	mux := httprouter.New()
@@ -48,6 +58,7 @@ func main() {
 	mux.HandlerFunc("GET", "/stream", getStream(filemap))
 	mux.HandlerFunc("GET", "/art", artwork)
 	mux.HandlerFunc("GET", "/api", getAPI(songs))
+	mux.HandlerFunc("GET", "/like", likes(liked))
 	fmt.Printf("Serving over: http://127.0.0.1:%d\n", *port)
 	err = http.ListenAndServe(fmt.Sprintf(":%d", *port), mux)
 	srvlog.Crit("server crashed", "error", err)

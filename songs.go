@@ -26,6 +26,7 @@ type byTitle []*song
 type byArtist []*song
 type byAlbum []*song
 type byLeast []*song
+type byFavorite []*song
 
 func (songs byTitle) Len() int {
 	return len(songs)
@@ -43,6 +44,10 @@ func (songs byLeast) Len() int {
 	return len(songs)
 }
 
+func (songs byFavorite) Len() int {
+	return len(songs)
+}
+
 func (songs byTitle) Swap(i, j int) {
 	songs[i], songs[j] = songs[j], songs[i]
 }
@@ -56,6 +61,10 @@ func (songs byAlbum) Swap(i, j int) {
 }
 
 func (songs byLeast) Swap(i, j int) {
+	songs[i], songs[j] = songs[j], songs[i]
+}
+
+func (songs byFavorite) Swap(i, j int) {
 	songs[i], songs[j] = songs[j], songs[i]
 }
 
@@ -137,6 +146,36 @@ func (songs byLeast) Less(i, j int) bool {
 	return false
 }
 
+func (songs byFavorite) Less(i, j int) bool {
+	var icount, jcount int
+	if _, ok := liked[songs[i].ID]; ok {
+		icount = 1
+	} else {
+		icount = 0
+	}
+	if _, ok := liked[songs[j].ID]; ok {
+		jcount = 1
+	} else {
+		jcount = 0
+	}
+	if icount != jcount {
+		return icount > jcount
+	}
+	if songs[i].Artist != songs[j].Artist {
+		return songs[i].Artist < songs[j].Artist
+	}
+	if songs[i].Album != songs[j].Album {
+		return songs[i].Album < songs[j].Album
+	}
+	if songs[i].Track != songs[j].Track {
+		return songs[i].Track < songs[j].Track
+	}
+	if songs[i].Title != songs[j].Title {
+		return songs[i].Title < songs[j].Title
+	}
+	return false
+}
+
 func countPlay(playcount map[string]int64) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
@@ -144,6 +183,43 @@ func countPlay(playcount map[string]int64) http.HandlerFunc {
 		playcount[id]++
 		savePlayCount(playcount)
 		apiMutex.Unlock()
+	}
+}
+
+func likes(likes map[string]bool) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		apiMutex.Lock()
+		defer apiMutex.Unlock()
+		if id := r.URL.Query().Get("id"); id != "" {
+			if v, ok := likes[id]; ok {
+				json.NewEncoder(w).Encode(v)
+			} else {
+				json.NewEncoder(w).Encode(false)
+			}
+			return
+		}
+		if like := r.URL.Query().Get("like"); like != "" {
+			if v, ok := likes[like]; ok {
+				if v == true {
+					delete(likes, like)
+					json.NewEncoder(w).Encode(false)
+				} else {
+					likes[like] = true
+					json.NewEncoder(w).Encode(true)
+				}
+			} else {
+				likes[like] = true
+				json.NewEncoder(w).Encode(true)
+			}
+		}
+		err := likedFile.Truncate(0)
+		if err != nil {
+			srvlog.Crit("Could not truncate likes file", "error", err)
+		}
+		err = json.NewEncoder(likedFile).Encode(likes)
+		if err != nil {
+			srvlog.Crit("Could not encode likes json", "error", err)
+		}
 	}
 }
 
@@ -242,6 +318,25 @@ func getAPI(songs []*song) http.HandlerFunc {
 			enc := json.NewEncoder(w)
 			enc.SetIndent("", " ")
 			enc.Encode(songs)
+			apiMutex.Unlock()
+		case "byfavorite":
+			apiMutex.Lock()
+			sort.Sort(byFavorite(songs))
+			enc := json.NewEncoder(w)
+			enc.SetIndent("", " ")
+			enc.Encode(songs[0:len(liked)])
+			apiMutex.Unlock()
+		case "byfavshuffle":
+			apiMutex.Lock()
+			sort.Sort(byFavorite(songs))
+			rand.Seed(time.Now().UnixNano())
+			for i := len(songs[0:len(liked)]) - 1; i > 0; i-- {
+				j := rand.Intn(i + 1)
+				songs[i], songs[j] = songs[j], songs[i]
+			}
+			enc := json.NewEncoder(w)
+			enc.SetIndent("", " ")
+			enc.Encode(songs[0:len(liked)])
 			apiMutex.Unlock()
 		default:
 			w.WriteHeader(http.StatusNotFound)

@@ -43,6 +43,15 @@ window.addEventListener('WebComponentsReady', function(e) {
     document.getElementById("pauseit").addEventListener("click", function(e){
         pause();
     });
+    document.getElementById("favorite").addEventListener("click", function(e){
+        $.get(
+            [music.url, "/like"].join(""),
+            {"like" : music.playlist[music.current].ID},
+            function(data){
+                $("#favorite").attr("favorited", JSON.parse(data));
+            }
+        );
+    });
     //Sort event handler
     document.addEventListener("sort", function(e){
         music.request.open("GET", [music.url, "/api?sort=", music.selected].join(""));
@@ -156,6 +165,13 @@ function playSong(id){
             artwork: [{ src: [music.url, "/art?id=", music.playlist[id].ID].join(""),}],
         });
     }
+    $.get(
+        [music.url, "/like"].join(""),
+        {"id" : music.playlist[id].ID},
+        function(data){
+            $("#favorite").attr("favorited", JSON.parse(data));
+        }
+    );
 }
 
 //Playback functions
