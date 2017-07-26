@@ -216,7 +216,9 @@ func likes(likes map[string]bool) http.HandlerFunc {
 		if err != nil {
 			srvlog.Crit("Could not truncate likes file", "error", err)
 		}
-		err = json.NewEncoder(likedFile).Encode(likes)
+		enc := json.NewEncoder(likedFile)
+		enc.SetIndent("", " ")
+		err = enc.Encode(likes)
 		if err != nil {
 			srvlog.Crit("Could not encode likes json", "error", err)
 		}
