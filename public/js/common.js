@@ -43,12 +43,12 @@ window.addEventListener('WebComponentsReady', function(e) {
     document.getElementById("pauseit").addEventListener("click", function(e){
         pause();
     });
-    document.getElementById("favorite").addEventListener("click", function(e){
+    document.getElementById("favoriteit").addEventListener("click", function(e){
         $.get(
             [music.url, "/like"].join(""),
             {"like" : music.playlist[music.current].ID},
             function(data){
-                $("#favorite").attr("favorited", JSON.parse(data));
+                document.getElementById("favoriteit").setAttribute("favorited", JSON.parse(data));
             }
         );
     });
@@ -169,7 +169,7 @@ function playSong(id){
         [music.url, "/like"].join(""),
         {"id" : music.playlist[id].ID},
         function(data){
-            $("#favorite").attr("favorited", JSON.parse(data));
+            document.getElementById("favoriteit").setAttribute("favorited", JSON.parse(data));
         }
     );
 }
