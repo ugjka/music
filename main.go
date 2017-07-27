@@ -19,6 +19,7 @@ var likedFile *os.File
 var sortcache = make(map[string][]byte)
 var playcount = make(map[string]int64)
 var liked = make(map[string]bool)
+var idcache = make(map[string]bool)
 var apiMutex sync.Mutex
 
 func main() {
@@ -52,6 +53,9 @@ func main() {
 	}
 	os.Mkdir("artcache", 0755)
 	songs, filemap := (getSongs(*path))
+	for _, v := range songs {
+		idcache[v.ID] = true
+	}
 	mux := httprouter.New()
 	mux.NotFound = http.FileServer(http.Dir("public"))
 	mux.HandlerFunc("GET", "/count", countPlay(playcount))

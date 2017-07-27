@@ -199,6 +199,9 @@ func likes(likes map[string]bool) http.HandlerFunc {
 			return
 		}
 		if like := r.URL.Query().Get("like"); like != "" {
+			if _, ok := idcache[like]; !ok {
+				return
+			}
 			if _, ok := likes[like]; ok {
 				delete(likes, like)
 				json.NewEncoder(w).Encode(false)
