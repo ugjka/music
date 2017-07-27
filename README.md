@@ -1,5 +1,5 @@
 # music
-Online music player
+Stream your god damned music hassle free
 
 ## install instructions
 
