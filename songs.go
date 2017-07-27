@@ -199,14 +199,9 @@ func likes(likes map[string]bool) http.HandlerFunc {
 			return
 		}
 		if like := r.URL.Query().Get("like"); like != "" {
-			if v, ok := likes[like]; ok {
-				if v == true {
-					delete(likes, like)
-					json.NewEncoder(w).Encode(false)
-				} else {
-					likes[like] = true
-					json.NewEncoder(w).Encode(true)
-				}
+			if _, ok := likes[like]; ok {
+				delete(likes, like)
+				json.NewEncoder(w).Encode(false)
 			} else {
 				likes[like] = true
 				json.NewEncoder(w).Encode(true)
@@ -215,6 +210,7 @@ func likes(likes map[string]bool) http.HandlerFunc {
 		err := likedFile.Truncate(0)
 		if err != nil {
 			srvlog.Crit("Could not truncate likes file", "error", err)
+			return
 		}
 		enc := json.NewEncoder(likedFile)
 		enc.SetIndent("", " ")
