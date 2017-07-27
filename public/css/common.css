@@ -1,61 +1,63 @@
 /* My css styling
 	Ugis Germanis
 */
+
 body {
-	margin: 0;
-	margin-left: 5px;
-	font-family: 'Roboto', 'Noto', sans-serif;
-	background-color: #eee;
-	background-position: center;
-	background-attachment: fixed;
-	background-repeat: no-repeat;
-	position: relative;
+    margin: 0;
+    margin-left: 5px;
+    font-family: 'Roboto', 'Noto', sans-serif;
+    background-color: #eee;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    position: relative;
 }
 
 body::after {
-	background-color: white;
-	content: "";
-	opacity: 0.6;
-	height: 100%;
-	width: 100%;
-	display: block;
-	z-index: -1;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;   
+    background-color: white;
+    content: "";
+    opacity: 0.6;
+    height: 100%;
+    width: 100%;
+    display: block;
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
 }
 
 #startDrawer {
-	--app-drawer-content-container: {
-	box-shadow: 1px 0 2px 1px rgba(0,0,0,0.18);
-	}
+    --app-drawer-content-container: {
+        box-shadow: 1px 0 2px 1px rgba(0, 0, 0, 0.18);
+    }
 }
+
 app-header {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	background-color: #4285f4;
-	color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #4285f4;
+    color: #fff;
 }
 
 app-header paper-icon-button {
     --paper-icon-button-ink-color: white;
 }
-	
+
 paper-button {
     font-family: 'Roboto', 'Noto', sans-serif;
     font-weight: normal;
     font-size: 14px;
-	-webkit-font-smoothing: antialiased;
-	background-color: var(--paper-green-500);
-	color: white;
-	width: 90%;
-	margin-top: 20px;
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--paper-green-500);
+    color: white;
+    width: 90%;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
 
 paper-button[active] {
@@ -63,65 +65,65 @@ paper-button[active] {
 }
 
 footer {
-	position: fixed;
-	height: 70px;
-	left: 0;
-	bottom: 0;
-	right: 0;
+    position: fixed;
+    height: 70px;
+    left: 0;
+    bottom: 0;
+    right: 0;
     background-color: #4285f4;
 }
 
 #playlist {
-	padding-top: 120px;
-	padding-bottom: 100px;
+    padding-top: 120px;
+    padding-bottom: 100px;
 }
 
 [playing=true] {
-	background-color: red;
+    background-color: red;
 }
 
 .song:hover {
-	background-color: #ff9090;
+    background-color: #ff9090;
 }
 
 [playing=true]:hover {
-	background-color: red;
+    background-color: red;
 }
 
 [playing=true]::before {
-	content: "► ";
+    content: "► ";
 }
 
 #slider {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	width: 95%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
 }
 
 #controls {
-	display: block;
-	width: 222px;
-	margin-left: auto;
-	margin-right: auto;
+    display: block;
+    width: 222px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 [loading=true]::after {
-	content: "Loading...";
-	text-align: center;
-	display: block;
-	width: 100%;
+    content: "Loading...";
+    text-align: center;
+    display: block;
+    width: 100%;
 }
 
 #favoriteit {
-	width: 33px;
-	height: 33px;
+    width: 33px;
+    height: 33px;
 }
 
 [favorited=true] {
-	color: red;
+    color: red;
 }
 
 [favorited=false] {
-	color: black;
+    color: black;
 }
