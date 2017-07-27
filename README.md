@@ -21,7 +21,9 @@ navigate in your browser to
 
 Desktop view
 
-![desktotp](https://img.ugjka.net/tHMNjt4w.png)
+![desktop](https://img.ugjka.net/1EICevTL.png)
+
+![desktop](https://img.ugjka.net/FNYRvlRF.png)
 
 Mobile lockscreen
 
