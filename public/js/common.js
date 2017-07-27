@@ -87,7 +87,7 @@ window.addEventListener('WebComponentsReady', function(e) {
                     this.unload();
                 },
                 whileplaying: function(){
-                    if (music.sliderDrag == false){
+                    if (music.sliderDrag === false){
                         music.slider.value = (this.position / this.durationEstimate) * 1000;
                     }
                 },
@@ -143,13 +143,13 @@ var music = {
 };
 
 music.request.onloadend = function(){
-    if (this.readyState = 4 && this.status == 200) {
+    if (this.readyState == 4 && this.status == 200) {
         music.playlist = JSON.parse(this.responseText);
         $("#playlist").attr('loading', true);
         music.render();
         $("#playlist").attr('loading', false);
     }
-}
+};
 //Play song by id
 function playSong(id){
     music.mainSound.stop();
@@ -187,8 +187,8 @@ function playnext(){
 
 function playprevious(){
     music.previous = music.current;
-    if (music.current == 0) {
-        music.current = music.playlist.length - 1
+    if (music.current === 0) {
+        music.current = music.playlist.length - 1;
     } else {
         music.current--;
     }
