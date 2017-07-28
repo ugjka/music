@@ -23,9 +23,11 @@ var liked = make(map[string]bool)
 var idcache = make(map[string]bool)
 var apiMutex sync.Mutex
 var likedCount int
+var enableFlac *bool
 
 func main() {
 	//Flags
+	enableFlac = flag.Bool("enableFlac", false, "Enable Flac streaming")
 	port := flag.Uint("port", 8080, "Server Port")
 	path := flag.String("path", "./music", "Directory containing your mp3 files")
 	flag.Parse()

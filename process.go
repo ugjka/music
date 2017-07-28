@@ -29,19 +29,19 @@ func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
 	}
 	filemap = make(map[string]string)
 	filepath.Walk(searchdir, func(path string, finfo os.FileInfo, err error) error {
-		if v, ok := cache[path]; ok {
-			songs = append(songs, &v)
-			filemap[v.ID] = path
-			return nil
-		}
 		if finfo.IsDir() {
 			return nil
 		}
 		if finfo.Name() == ".directory" {
 			return nil
 		}
-		if !(strings.HasSuffix(path, ".mp3") || strings.HasSuffix(path, ".flac")) {
+		if !(strings.HasSuffix(path, ".mp3") || (strings.HasSuffix(path, ".flac") && *enableFlac)) {
 			srvlog.Info("skipping invalid file", "file", finfo.Name())
+			return nil
+		}
+		if v, ok := cache[path]; ok {
+			songs = append(songs, &v)
+			filemap[v.ID] = path
 			return nil
 		}
 		f, err := os.Open(path)
