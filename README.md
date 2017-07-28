@@ -1,6 +1,9 @@
 # music
 Stream your god damned music hassle free
 
+### Note
+use `-enableFlac` flag for flac support (not every browser supports flac file streaming)
+
 ## install instructions
 
 `go get -u github.com/ugjka/music`
