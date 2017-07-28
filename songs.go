@@ -212,9 +212,11 @@ func likes(likes map[string]bool) http.HandlerFunc {
 			}
 			if _, ok := likes[like]; ok {
 				delete(likes, like)
+				likedCount--
 				json.NewEncoder(w).Encode(false)
 			} else {
 				likes[like] = true
+				likedCount++
 				json.NewEncoder(w).Encode(true)
 			}
 		}
