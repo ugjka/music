@@ -197,7 +197,7 @@ function playnext() {
 
 function playprevious() {
     music.previous = music.current;
-    if (music.current == 0) {
+    if ((music.current == 0) || (music.current > music.playlist.length - 1)) {
         music.current = music.playlist.length - 1;
     } else {
         music.current--;
