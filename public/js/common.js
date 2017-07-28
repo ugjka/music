@@ -56,9 +56,18 @@ window.addEventListener('WebComponentsReady', function (e) {
         );
     });
     //Sort event handler
+    //Get the playlist
     document.addEventListener("sort", function (e) {
-        music.request.open("GET", [music.url, "/api?sort=", music.selected].join(""));
-        music.request.send();
+        $.get(
+            [music.url, "/api"].join(""),
+            { "sort": music.selected },
+            function (data) {
+                music.playlist = data;
+                $("#playlist").attr('loading', true);
+                music.render();
+                $("#playlist").attr('loading', false);
+            }
+        );
     }, false);
     //Init sound object
     soundManager.setup({
@@ -125,7 +134,6 @@ var music = {
     sort: new Event('sort'),
     playlist: null,
     mainSound: null,
-    request: new XMLHttpRequest(),
     url: [document.location.protocol, "//", window.location.host].join(""),
     current: 0,
     previous: 0,
@@ -149,15 +157,6 @@ var music = {
     },
 };
 
-//Load playlists
-music.request.onloadend = function () {
-    if (this.readyState == 4 && this.status == 200) {
-        music.playlist = JSON.parse(this.responseText);
-        $("#playlist").attr('loading', true);
-        music.render();
-        $("#playlist").attr('loading', false);
-    }
-};
 //Play song by id
 function playSong(id) {
     music.mainSound.stop();
