@@ -13,6 +13,7 @@ import (
 	"time"
 )
 
+//Song object
 type song struct {
 	Title  string
 	Artist string
@@ -22,11 +23,16 @@ type song struct {
 	path   string
 }
 
+//Types for sorting
 type byTitle []*song
 type byArtist []*song
 type byAlbum []*song
 type byLeast []*song
 type byFavorite []*song
+
+//
+// Satisfy sort interfaces
+//
 
 func (songs byTitle) Len() int {
 	return len(songs)
@@ -176,6 +182,7 @@ func (songs byFavorite) Less(i, j int) bool {
 	return false
 }
 
+// Play counting endpoint
 func countPlay(playcount map[string]int64) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
@@ -186,6 +193,7 @@ func countPlay(playcount map[string]int64) http.HandlerFunc {
 	}
 }
 
+// Get likes or set or remove likes
 func likes(likes map[string]bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		apiMutex.Lock()
@@ -224,6 +232,7 @@ func likes(likes map[string]bool) http.HandlerFunc {
 	}
 }
 
+// Serves Audio files
 func getStream(filemap map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
@@ -242,6 +251,7 @@ func getStream(filemap map[string]string) http.HandlerFunc {
 	}
 }
 
+// Serves playlists
 func getAPI(songs []*song) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -325,19 +335,19 @@ func getAPI(songs []*song) http.HandlerFunc {
 			sort.Sort(byFavorite(songs))
 			enc := json.NewEncoder(w)
 			enc.SetIndent("", " ")
-			enc.Encode(songs[0:len(liked)])
+			enc.Encode(songs[0:likedCount])
 			apiMutex.Unlock()
 		case "byfavshuffle":
 			apiMutex.Lock()
 			sort.Sort(byFavorite(songs))
 			rand.Seed(time.Now().UnixNano())
-			for i := len(songs[0:len(liked)]) - 1; i > 0; i-- {
+			for i := len(songs[0:likedCount]) - 1; i > 0; i-- {
 				j := rand.Intn(i + 1)
 				songs[i], songs[j] = songs[j], songs[i]
 			}
 			enc := json.NewEncoder(w)
 			enc.SetIndent("", " ")
-			enc.Encode(songs[0:len(liked)])
+			enc.Encode(songs[0:likedCount])
 			apiMutex.Unlock()
 		default:
 			w.WriteHeader(http.StatusNotFound)
@@ -345,6 +355,7 @@ func getAPI(songs []*song) http.HandlerFunc {
 	}
 }
 
+// Serves song/album artwork
 func artwork(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	reg := regexp.MustCompile("^\\w+$")
@@ -361,6 +372,7 @@ func artwork(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, file)
 }
 
+// Save playcount to a file
 func savePlayCount(playcount map[string]int64) {
 	playcountFile.Truncate(0)
 	enc := json.NewEncoder(playcountFile)

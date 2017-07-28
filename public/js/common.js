@@ -1,5 +1,7 @@
 // Ugis Germanis
 // My javascript
+
+// Set up stuff when webcomponents are ready
 window.addEventListener('WebComponentsReady', function (e) {
     console.log('webcomponents are ready!!!');
     //Slider events

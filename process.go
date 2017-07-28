@@ -12,6 +12,10 @@ import (
 	"github.com/dhowden/tag"
 )
 
+//
+//Process audio files, extract info/artwork
+//
+
 func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
 	cache := make(map[string]song)
 	cachef, err := os.OpenFile("cache.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
