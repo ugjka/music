@@ -46,6 +46,7 @@ window.addEventListener('WebComponentsReady', function (e) {
         pause();
     });
     document.getElementById("favoriteit").addEventListener("click", function (e) {
+        //Set or Unset favorite
         $.get(
             [music.url, "/like"].join(""),
             { "like": music.playlist[music.current].ID },
@@ -79,6 +80,7 @@ window.addEventListener('WebComponentsReady', function (e) {
                     }
                     this.unload();
                     playSong(music.current);
+                    //Count the play
                     $.get(
                         [music.url, "/count"].join(""),
                         { "id": music.playlist[music.previous].ID }
@@ -88,6 +90,7 @@ window.addEventListener('WebComponentsReady', function (e) {
                     $(["#sound", music.previous].join("")).attr("playing", false);
                     this.unload();
                 },
+                //Update the slider on playback
                 whileplaying: function () {
                     if (music.sliderDrag === false) {
                         music.slider.value = (this.position / this.durationEstimate) * 1000;
@@ -100,6 +103,7 @@ window.addEventListener('WebComponentsReady', function (e) {
     //Default sort
     document.getElementById(music.selected).active = true;
     document.dispatchEvent(music.sort);
+    //Set up Media Session API controls
     if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('nexttrack', function () {
             playnext();
@@ -127,6 +131,7 @@ var music = {
     previous: 0,
     slider: null,
     sliderDrag: false,
+    //Render the playlist
     render: function () {
         $("#playlist").empty();
         var playlist = [""];
@@ -144,6 +149,7 @@ var music = {
     },
 };
 
+//Load playlists
 music.request.onloadend = function () {
     if (this.readyState == 4 && this.status == 200) {
         music.playlist = JSON.parse(this.responseText);
@@ -159,6 +165,7 @@ function playSong(id) {
     music.mainSound.url = [music.url, "/stream?id=", music.playlist[id].ID].join("");
     music.mainSound.play();
     document.getElementsByTagName("body")[0].style.backgroundImage = ["url(", music.url, "/art?id=", music.playlist[id].ID, ")"].join("");
+    //Set up media session data
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
             title: music.playlist[music.current].Title,
@@ -167,6 +174,7 @@ function playSong(id) {
             artwork: [{ src: [music.url, "/art?id=", music.playlist[id].ID].join(""), }],
         });
     }
+    //Get if liked or not
     $.get(
         [music.url, "/like"].join(""),
         { "id": music.playlist[id].ID },
