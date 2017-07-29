@@ -52,7 +52,8 @@ window.addEventListener('WebComponentsReady', function (e) {
             { "like": music.playlist[music.current].ID },
             function (data) {
                 document.getElementById("favoriteit").setAttribute("favorited", data);
-            }
+            },
+            "json"
         );
     });
     //Sort event handler
@@ -66,7 +67,8 @@ window.addEventListener('WebComponentsReady', function (e) {
                 $("#playlist").attr('loading', true);
                 music.render();
                 $("#playlist").attr('loading', false);
-            }
+            },
+            "json"
         );
     }, false);
     //Init sound object
@@ -179,7 +181,8 @@ function playSong(id) {
         { "id": music.playlist[id].ID },
         function (data) {
             document.getElementById("favoriteit").setAttribute("favorited", data);
-        }
+        },
+        "json"
     );
 }
 
