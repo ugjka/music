@@ -35,4 +35,8 @@ Desktop view
 
 Mobile lockscreen
 
-![mobile](https://img.ugjka.net/WAeNnJ3q.png)
+![mobile](https://img.ugjka.net/XPdyMKUk.png)
+
+Optional Password Protection
+
+![password](https://img.ugjka.net/fI5L62ap.png)
