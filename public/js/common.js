@@ -129,6 +129,35 @@ window.addEventListener('WebComponentsReady', function (e) {
             pause();
         });
     }
+    //Handle login
+    $.post([music.url, "/login"].join(""), { password: "", secret: $.cookie("secret") },
+        function (data) {
+            if (data === false) {
+                login.open();
+            }
+        },
+        "json"
+    );
+    document.getElementById("passwordEnter").addEventListener("click", function (e) {
+        var pass = passwordInput.value;
+        if (pass === undefined) {
+            $("#passwordWrong").empty();
+            $("#passwordWrong").append("Enter the password");
+            return;
+        }
+        $.post([music.url, "/login"].join(""), { password: pass },
+            function (data) {
+                if (data === false) {
+                    login.open();
+                    $("#passwordWrong").empty();
+                    $("#passwordWrong").append("Wrong password");
+                } else {
+                    login.close();
+                }
+            },
+            "json"
+        );
+    });
 });
 //Main object
 var music = {

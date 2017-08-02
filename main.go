@@ -2,12 +2,15 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
 	"os"
 	"sync"
+
+	"golang.org/x/crypto/sha3"
 
 	"github.com/julienschmidt/httprouter"
 	log "gopkg.in/inconshreveable/log15.v2"
@@ -24,9 +27,12 @@ var idcache = make(map[string]bool)
 var apiMutex sync.Mutex
 var likedCount int
 var enableFlac *bool
+var passArg passwordFlag
 
 func main() {
 	//Flags
+	passArg.password = base64.URLEncoding.EncodeToString(sha3.New512().Sum([]byte("")))
+	flag.Var(&passArg, "password", "set password")
 	enableFlac = flag.Bool("enableFlac", false, "Enable Flac streaming")
 	port := flag.Uint("port", 8080, "Server Port")
 	path := flag.String("path", "./music", "Directory containing your mp3 files")
@@ -79,6 +85,7 @@ func main() {
 	mux.HandlerFunc("GET", "/art", artwork)
 	mux.HandlerFunc("GET", "/api", getAPI(songs))
 	mux.HandlerFunc("GET", "/like", likes(liked))
+	mux.HandlerFunc("POST", "/login", login(passArg.password))
 	fmt.Printf("Serving over: http://127.0.0.1:%d\n", *port)
 	err = http.ListenAndServe(fmt.Sprintf(":%d", *port), mux)
 	srvlog.Crit("server crashed", "error", err)

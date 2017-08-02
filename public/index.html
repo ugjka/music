@@ -61,12 +61,15 @@
 	<link rel="import" href="bower_components/app-layout/app-toolbar/app-toolbar.html">
 	<link rel="import" href="bower_components/paper-button/paper-button.html">
 	<link rel="import" href="bower_components/iron-icons/av-icons.html">
+	<link rel="import" href="bower_components/paper-dialog/paper-dialog.html" />
+	<link rel="import" href="bower_components/paper-input/paper-input.html" />
 
 	<!-- soundmanager js -->
 	<script src="bower_components/SoundManager2/script/soundmanager2.js"></script>
 
 	<!-- jquery -->
 	<script src="bower_components/jquery/dist/jquery.js"></script>
+	<script src="bower_components/jquery.cookie/jquery.cookie.js"></script>
 
 
 </head>
@@ -92,6 +95,17 @@
 			<paper-button class="sorter" id="byfavshuffle" toggles raised class="green">Favorites Shuffled</paper-button>
 		</div>
 	</app-drawer>
+	<paper-dialog id="login" modal>
+		<h2>Enter password</h2>
+		<p id="passwordWrong"></p>
+		<paper-input id="passwordInput" always-float-label type="password" label="password">
+			<iron-icon icon="create" prefix></iron-icon>
+		</paper-input>
+		<paper-button raised id="passwordEnter" class="dropdown-trigger">
+			<iron-icon icon="verified-user"></iron-icon>
+			<span>Ok</span>
+		</paper-button>
+	</paper-dialog>
 	<ol id="playlist" loading="true">
 	</ol>
 	<footer>

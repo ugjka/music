@@ -185,6 +185,10 @@ func (songs byFavorite) Less(i, j int) bool {
 // Play counting endpoint
 func countPlay(playcount map[string]int64) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if err := authorize(w, r); err != nil {
+			srvlog.Warn("Acess denied", "err", err)
+			return
+		}
 		id := r.URL.Query().Get("id")
 		apiMutex.Lock()
 		playcount[id]++
@@ -196,6 +200,10 @@ func countPlay(playcount map[string]int64) http.HandlerFunc {
 // Get likes or set or remove likes
 func likes(likes map[string]bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if err := authorize(w, r); err != nil {
+			srvlog.Warn("Acess denied", "err", err)
+			return
+		}
 		apiMutex.Lock()
 		defer apiMutex.Unlock()
 		if id := r.URL.Query().Get("id"); id != "" {
@@ -237,6 +245,10 @@ func likes(likes map[string]bool) http.HandlerFunc {
 // Serves Audio files
 func getStream(filemap map[string]string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if err := authorize(w, r); err != nil {
+			srvlog.Warn("Acess denied", "err", err)
+			return
+		}
 		id := r.URL.Query().Get("id")
 		if v, ok := filemap[id]; ok {
 			_, err := os.Stat(v)
@@ -359,6 +371,10 @@ func getAPI(songs []*song) http.HandlerFunc {
 
 // Serves song/album artwork
 func artwork(w http.ResponseWriter, r *http.Request) {
+	if err := authorize(w, r); err != nil {
+		srvlog.Warn("Acess denied", "err", err)
+		return
+	}
 	id := r.URL.Query().Get("id")
 	reg := regexp.MustCompile("^\\w+$")
 	if !reg.MatchString(id) {
