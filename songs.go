@@ -23,6 +23,8 @@ type song struct {
 	path   string
 }
 
+type songs []*song
+
 //Types for sorting
 type byTitle []*song
 type byArtist []*song
@@ -265,8 +267,14 @@ func getStream(filemap map[string]string) http.HandlerFunc {
 	}
 }
 
+func (s songs) send(w http.ResponseWriter, r *http.Request, i int) {
+	enc := json.NewEncoder(w)
+	enc.SetIndent("", " ")
+	enc.Encode(s[:i])
+}
+
 // Serves playlists
-func getAPI(songs []*song) http.HandlerFunc {
+func getAPI(songs songs) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		var err error
@@ -275,9 +283,7 @@ func getAPI(songs []*song) http.HandlerFunc {
 			if v, ok := sortcache["bytitle"]; !ok {
 				apiMutex.Lock()
 				sort.Sort(byTitle(songs))
-				enc := json.NewEncoder(w)
-				enc.SetIndent("", " ")
-				enc.Encode(songs)
+				songs.send(w, r, len(songs))
 				sortcache["bytitle"], err = json.MarshalIndent(songs, "", " ")
 				apiMutex.Unlock()
 				if err != nil {
@@ -291,9 +297,7 @@ func getAPI(songs []*song) http.HandlerFunc {
 			if v, ok := sortcache["byartist"]; !ok {
 				apiMutex.Lock()
 				sort.Sort(byArtist(songs))
-				enc := json.NewEncoder(w)
-				enc.SetIndent("", " ")
-				enc.Encode(songs)
+				songs.send(w, r, len(songs))
 				sortcache["byartist"], err = json.MarshalIndent(songs, "", " ")
 				apiMutex.Unlock()
 				if err != nil {
@@ -307,9 +311,7 @@ func getAPI(songs []*song) http.HandlerFunc {
 			if v, ok := sortcache["byalbum"]; !ok {
 				apiMutex.Lock()
 				sort.Sort(byAlbum(songs))
-				enc := json.NewEncoder(w)
-				enc.SetIndent("", " ")
-				enc.Encode(songs)
+				songs.send(w, r, len(songs))
 				sortcache["byalbum"], err = json.MarshalIndent(songs, "", " ")
 				apiMutex.Unlock()
 				if err != nil {
@@ -326,30 +328,22 @@ func getAPI(songs []*song) http.HandlerFunc {
 				j := rand.Intn(i + 1)
 				songs[i], songs[j] = songs[j], songs[i]
 			}
-			enc := json.NewEncoder(w)
-			enc.SetIndent("", " ")
-			enc.Encode(songs)
+			songs.send(w, r, len(songs))
 			apiMutex.Unlock()
 		case "byleast":
 			apiMutex.Lock()
 			sort.Sort(byLeast(songs))
-			enc := json.NewEncoder(w)
-			enc.SetIndent("", " ")
-			enc.Encode(songs)
+			songs.send(w, r, len(songs))
 			apiMutex.Unlock()
 		case "bymost":
 			apiMutex.Lock()
 			sort.Sort(sort.Reverse(byLeast(songs)))
-			enc := json.NewEncoder(w)
-			enc.SetIndent("", " ")
-			enc.Encode(songs)
+			songs.send(w, r, len(songs))
 			apiMutex.Unlock()
 		case "byfavorite":
 			apiMutex.Lock()
 			sort.Sort(byFavorite(songs))
-			enc := json.NewEncoder(w)
-			enc.SetIndent("", " ")
-			enc.Encode(songs[0:likedCount])
+			songs.send(w, r, likedCount)
 			apiMutex.Unlock()
 		case "byfavshuffle":
 			apiMutex.Lock()
@@ -359,9 +353,7 @@ func getAPI(songs []*song) http.HandlerFunc {
 				j := rand.Intn(i + 1)
 				songs[i], songs[j] = songs[j], songs[i]
 			}
-			enc := json.NewEncoder(w)
-			enc.SetIndent("", " ")
-			enc.Encode(songs[0:likedCount])
+			songs.send(w, r, likedCount)
 			apiMutex.Unlock()
 		default:
 			w.WriteHeader(http.StatusNotFound)
