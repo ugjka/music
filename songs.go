@@ -273,6 +273,14 @@ func (s songs) send(w http.ResponseWriter, r *http.Request, i int) {
 	enc.Encode(s[:i])
 }
 
+func (s songs) shuffle(len int) {
+	rand.Seed(time.Now().UnixNano())
+	for i := len - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		s[i], s[j] = s[j], s[i]
+	}
+}
+
 // Serves playlists
 func getAPI(songs songs) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -323,11 +331,7 @@ func getAPI(songs songs) http.HandlerFunc {
 			}
 		case "byshuffle":
 			apiMutex.Lock()
-			rand.Seed(time.Now().UnixNano())
-			for i := len(songs) - 1; i > 0; i-- {
-				j := rand.Intn(i + 1)
-				songs[i], songs[j] = songs[j], songs[i]
-			}
+			songs.shuffle(len(songs))
 			songs.send(w, r, len(songs))
 			apiMutex.Unlock()
 		case "byleast":
@@ -348,11 +352,7 @@ func getAPI(songs songs) http.HandlerFunc {
 		case "byfavshuffle":
 			apiMutex.Lock()
 			sort.Sort(byFavorite(songs))
-			rand.Seed(time.Now().UnixNano())
-			for i := len(songs[0:likedCount]) - 1; i > 0; i-- {
-				j := rand.Intn(i + 1)
-				songs[i], songs[j] = songs[j], songs[i]
-			}
+			songs.shuffle(likedCount)
 			songs.send(w, r, likedCount)
 			apiMutex.Unlock()
 		default:
