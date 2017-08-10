@@ -160,7 +160,6 @@ window.addEventListener('WebComponentsReady', function (e) {
         if (e.target && e.target.nodeName == "LI") {
             music.previous = music.current;
             music.current = e.target.getAttribute("index");
-            console.log("Test");
             playSong(music.current);
         }
     });
