@@ -156,6 +156,14 @@ window.addEventListener('WebComponentsReady', function (e) {
             "json"
         );
     });
+    document.getElementById("playlist").addEventListener('click', function (e) {
+        if (e.target && e.target.nodeName == "LI") {
+            music.previous = music.current;
+            music.current = e.target.getAttribute("index");
+            console.log("Test");
+            playSong(music.current);
+        }
+    });
 });
 //Main object
 var music = {
@@ -176,19 +184,14 @@ var music = {
             playlist.push("<li id='sound", i, "' class='song' index='", i, "'>", this.playlist[i].Title, " - ", this.playlist[i].Artist, "</li>");
         }
         $("#playlist").append(playlist.join(""));
-        document.getElementById("playlist").addEventListener('click', function (e) {
-            if (e.target && e.target.nodeName == "LI") {
-                music.previous = music.current;
-                music.current = e.target.getAttribute("index");
-                playSong(music.current);
-            }
-        });
     },
 };
 
 //Play song by id
 function playSong(id) {
-    music.mainSound.stop();
+    if (music.mainSound.playState == 1) {
+        music.mainSound.stop();
+    }
     music.mainSound.unload();
     $(["#sound", id].join("")).attr("playing", true);
     music.mainSound.url = [music.url, "/stream?id=", music.playlist[id].ID].join("");
