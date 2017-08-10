@@ -89,7 +89,6 @@ window.addEventListener('WebComponentsReady', function (e) {
                     } else {
                         music.current++;
                     }
-                    this.unload();
                     playSong(music.current);
                     //Count the play
                     $.get(
@@ -99,7 +98,6 @@ window.addEventListener('WebComponentsReady', function (e) {
                 },
                 onstop: function () {
                     $(["#sound", music.previous].join("")).attr("playing", false);
-                    this.unload();
                 },
                 //Update the slider on playback
                 whileplaying: function () {
@@ -191,6 +189,7 @@ var music = {
 //Play song by id
 function playSong(id) {
     music.mainSound.stop();
+    music.mainSound.unload();
     $(["#sound", id].join("")).attr("playing", true);
     music.mainSound.url = [music.url, "/stream?id=", music.playlist[id].ID].join("");
     music.mainSound.play();
