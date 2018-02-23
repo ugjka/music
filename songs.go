@@ -1,15 +1,14 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"math/rand"
 	"net/http"
 	"os"
 	"regexp"
 	"sort"
+	"sync"
 	"time"
 )
 
@@ -23,14 +22,23 @@ type song struct {
 	path   string
 }
 
-type songs []*song
+type songs []song
+
+type idcache struct {
+	db map[string]*song
+	sync.RWMutex
+}
+type library struct {
+	songs   songs
+	idcache *idcache
+	likes   *like
+	sync.RWMutex
+}
 
 //Types for sorting
-type byTitle []*song
-type byArtist []*song
-type byAlbum []*song
-type byLeast []*song
-type byFavorite []*song
+type byTitle []song
+type byArtist []song
+type byAlbum []song
 
 //
 // Satisfy sort interfaces
@@ -48,14 +56,6 @@ func (songs byAlbum) Len() int {
 	return len(songs)
 }
 
-func (songs byLeast) Len() int {
-	return len(songs)
-}
-
-func (songs byFavorite) Len() int {
-	return len(songs)
-}
-
 func (songs byTitle) Swap(i, j int) {
 	songs[i], songs[j] = songs[j], songs[i]
 }
@@ -65,14 +65,6 @@ func (songs byArtist) Swap(i, j int) {
 }
 
 func (songs byAlbum) Swap(i, j int) {
-	songs[i], songs[j] = songs[j], songs[i]
-}
-
-func (songs byLeast) Swap(i, j int) {
-	songs[i], songs[j] = songs[j], songs[i]
-}
-
-func (songs byFavorite) Swap(i, j int) {
 	songs[i], songs[j] = songs[j], songs[i]
 }
 
@@ -124,73 +116,9 @@ func (songs byAlbum) Less(i, j int) bool {
 	return false
 }
 
-func (songs byLeast) Less(i, j int) bool {
-	var icount, jcount int64
-	if v, ok := playcount[songs[i].ID]; ok {
-		icount = v
-	} else {
-		icount = 0
-	}
-	if v, ok := playcount[songs[j].ID]; ok {
-		jcount = v
-	} else {
-		jcount = 0
-	}
-	if icount != jcount {
-		return icount < jcount
-	}
-	if songs[i].Artist != songs[j].Artist {
-		return songs[i].Artist < songs[j].Artist
-	}
-	if songs[i].Album != songs[j].Album {
-		return songs[i].Album < songs[j].Album
-	}
-	if songs[i].Track != songs[j].Track {
-		return songs[i].Track < songs[j].Track
-	}
-	if songs[i].Title != songs[j].Title {
-		return songs[i].Title < songs[j].Title
-	}
-	return false
-}
-
-func (songs byFavorite) Less(i, j int) bool {
-	var icount, jcount int
-	if _, ok := liked[songs[i].ID]; ok {
-		icount = 1
-	} else {
-		icount = 0
-	}
-	if _, ok := liked[songs[j].ID]; ok {
-		jcount = 1
-	} else {
-		jcount = 0
-	}
-	if icount != jcount {
-		return icount > jcount
-	}
-	if songs[i].Artist != songs[j].Artist {
-		return songs[i].Artist < songs[j].Artist
-	}
-	if songs[i].Album != songs[j].Album {
-		return songs[i].Album < songs[j].Album
-	}
-	if songs[i].Track != songs[j].Track {
-		return songs[i].Track < songs[j].Track
-	}
-	if songs[i].Title != songs[j].Title {
-		return songs[i].Title < songs[j].Title
-	}
-	return false
-}
-
 // Play counting endpoint
 func countPlay(playcount map[string]int64) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := authorize(w, r); err != nil {
-			srvlog.Warn("Acess denied", "err", err)
-			return
-		}
 		id := r.URL.Query().Get("id")
 		apiMutex.Lock()
 		playcount[id]++
@@ -199,174 +127,103 @@ func countPlay(playcount map[string]int64) http.HandlerFunc {
 	}
 }
 
-// Get likes or set or remove likes
-func likes(likes map[string]bool) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if err := authorize(w, r); err != nil {
-			srvlog.Warn("Acess denied", "err", err)
-			return
-		}
-		apiMutex.Lock()
-		defer apiMutex.Unlock()
-		if id := r.URL.Query().Get("id"); id != "" {
-			if v, ok := likes[id]; ok {
-				json.NewEncoder(w).Encode(v)
-			} else {
-				json.NewEncoder(w).Encode(false)
-			}
-			return
-		}
-		if like := r.URL.Query().Get("like"); like != "" {
-			if _, ok := idcache[like]; !ok {
-				return
-			}
-			if _, ok := likes[like]; ok {
-				delete(likes, like)
-				likedCount--
-				json.NewEncoder(w).Encode(false)
-			} else {
-				likes[like] = true
-				likedCount++
-				json.NewEncoder(w).Encode(true)
-			}
-		}
-		err := likedFile.Truncate(0)
-		if err != nil {
-			srvlog.Crit("Could not truncate likes file", "error", err)
-			return
-		}
-		enc := json.NewEncoder(likedFile)
-		enc.SetIndent("", " ")
-		err = enc.Encode(likes)
-		if err != nil {
-			srvlog.Crit("Could not encode likes json", "error", err)
+func (cache *idcache) getCachedPaths(filemap map[string]string) {
+	for id, path := range filemap {
+		if _, ok := cache.db[id]; ok {
+			cache.db[id].path = path
 		}
 	}
 }
 
 // Serves Audio files
-func getStream(filemap map[string]string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if err := authorize(w, r); err != nil {
-			srvlog.Warn("Acess denied", "err", err)
-			return
-		}
-		id := r.URL.Query().Get("id")
-		if v, ok := filemap[id]; ok {
-			_, err := os.Stat(v)
-			if err != nil {
-				srvlog.Crit("file missing", "file", v)
-				w.WriteHeader(http.StatusNotFound)
-				return
-			}
-			http.ServeFile(w, r, v)
-		} else {
+func (cache *idcache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	if v, ok := cache.db[id]; ok {
+		_, err := os.Stat(v.path)
+		if err != nil {
+			srvlog.Crit("file missing", "file", v)
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
+		http.ServeFile(w, r, v.path)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 }
 
-func (s songs) send(w http.ResponseWriter, r *http.Request, i int) {
+func (s songs) send(w http.ResponseWriter, r *http.Request) {
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", " ")
-	enc.Encode(s[:i])
+	enc.Encode(s)
 }
 
-func (s songs) shuffle(len int) {
+func (s songs) shuffle() {
 	rand.Seed(time.Now().UnixNano())
-	for i := len - 1; i > 0; i-- {
+	for i := len(s) - 1; i > 0; i-- {
 		j := rand.Intn(i + 1)
 		s[i], s[j] = s[j], s[i]
 	}
 }
+func (l *library) buildIDcache() {
+	l.idcache = new(idcache)
+	l.idcache.db = make(map[string]*song)
+	for _, v := range l.songs {
+		tmp := v
+		l.idcache.db[v.ID] = &tmp
+	}
+}
+
+func (l *library) getLiked() songs {
+	liked := make(songs, 0)
+	l.likes.RLock()
+	for k := range l.likes.db {
+		if v, ok := l.idcache.db[k]; ok {
+			liked = append(liked, *v)
+		}
+	}
+	l.likes.RUnlock()
+	return liked
+}
 
 // Serves playlists
-func getAPI(songs songs) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		var err error
-		switch r.URL.Query().Get("sort") {
-		case "bytitle":
-			if v, ok := sortcache["bytitle"]; !ok {
-				apiMutex.Lock()
-				sort.Sort(byTitle(songs))
-				songs.send(w, r, len(songs))
-				sortcache["bytitle"], err = json.MarshalIndent(songs, "", " ")
-				apiMutex.Unlock()
-				if err != nil {
-					srvlog.Crit("marshaling cache by title failed", "error", err)
-					delete(sortcache, "bytitle")
-				}
-			} else {
-				io.Copy(w, bytes.NewReader(v))
-			}
-		case "byartist":
-			if v, ok := sortcache["byartist"]; !ok {
-				apiMutex.Lock()
-				sort.Sort(byArtist(songs))
-				songs.send(w, r, len(songs))
-				sortcache["byartist"], err = json.MarshalIndent(songs, "", " ")
-				apiMutex.Unlock()
-				if err != nil {
-					srvlog.Crit("marshaling cache by artist failed", "error", err)
-					delete(sortcache, "byartist")
-				}
-			} else {
-				io.Copy(w, bytes.NewReader(v))
-			}
-		case "byalbum":
-			if v, ok := sortcache["byalbum"]; !ok {
-				apiMutex.Lock()
-				sort.Sort(byAlbum(songs))
-				songs.send(w, r, len(songs))
-				sortcache["byalbum"], err = json.MarshalIndent(songs, "", " ")
-				apiMutex.Unlock()
-				if err != nil {
-					srvlog.Crit("marshaling cache by album failed", "error", err)
-					delete(sortcache, "byalbum")
-				}
-			} else {
-				io.Copy(w, bytes.NewReader(v))
-			}
-		case "byshuffle":
-			apiMutex.Lock()
-			songs.shuffle(len(songs))
-			songs.send(w, r, len(songs))
-			apiMutex.Unlock()
-		case "byleast":
-			apiMutex.Lock()
-			sort.Sort(byLeast(songs))
-			songs.send(w, r, len(songs))
-			apiMutex.Unlock()
-		case "bymost":
-			apiMutex.Lock()
-			sort.Sort(sort.Reverse(byLeast(songs)))
-			songs.send(w, r, len(songs))
-			apiMutex.Unlock()
-		case "byfavorite":
-			apiMutex.Lock()
-			sort.Sort(byFavorite(songs))
-			songs.send(w, r, likedCount)
-			apiMutex.Unlock()
-		case "byfavshuffle":
-			apiMutex.Lock()
-			sort.Sort(byFavorite(songs))
-			songs.shuffle(likedCount)
-			songs.send(w, r, likedCount)
-			apiMutex.Unlock()
-		default:
-			w.WriteHeader(http.StatusNotFound)
-		}
+func (l *library) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	l.RLock()
+	defer l.RUnlock()
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	songs := l.songs
+	switch r.URL.Query().Get("sort") {
+	case "bytitle":
+		sort.Sort(byTitle(songs))
+		songs.send(w, r)
+	case "byartist":
+		sort.Sort(byArtist(songs))
+		songs.send(w, r)
+	case "byalbum":
+		sort.Sort(byAlbum(songs))
+		songs.send(w, r)
+	case "byshuffle":
+		songs.shuffle()
+		songs.send(w, r)
+	case "byleast":
+		return
+	case "bymost":
+		return
+	case "byfavorite":
+		songs = l.getLiked()
+		sort.Sort(byTitle(songs))
+		songs.send(w, r)
+	case "byfavshuffle":
+		songs = l.getLiked()
+		songs.shuffle()
+		songs.send(w, r)
+	default:
+		w.WriteHeader(http.StatusNotFound)
 	}
 }
 
 // Serves song/album artwork
 func artwork(w http.ResponseWriter, r *http.Request) {
-	if err := authorize(w, r); err != nil {
-		srvlog.Warn("Acess denied", "err", err)
-		return
-	}
 	id := r.URL.Query().Get("id")
 	reg := regexp.MustCompile("^\\w+$")
 	if !reg.MatchString(id) {

@@ -19,20 +19,15 @@ import (
 //Globals
 var srvlog = log.New("module", "app/server")
 var playcountFile *os.File
-var likedFile *os.File
-var sortcache = make(map[string][]byte)
 var playcount = make(map[string]int64)
-var liked = make(map[string]bool)
-var idcache = make(map[string]bool)
 var apiMutex sync.Mutex
-var likedCount int
 var enableFlac *bool
-var passArg passwordFlag
+var pass passwordFlag
 
 func main() {
 	//Flags
-	passArg.password = base64.URLEncoding.EncodeToString(sha3.New512().Sum([]byte("")))
-	flag.Var(&passArg, "password", "set password")
+	pass.password = base64.URLEncoding.EncodeToString(sha3.New512().Sum([]byte("")))
+	flag.Var(&pass, "password", "set password")
 	enableFlac = flag.Bool("enableFlac", false, "Enable Flac streaming")
 	port := flag.Uint("port", 8080, "Server Port")
 	path := flag.String("path", "./music", "Directory containing your mp3 files")
@@ -55,37 +50,30 @@ func main() {
 	if err != nil {
 		srvlog.Warn("could not decode playcount json", "error", err)
 	}
-	//Create liked store
-	likedFile, err = os.OpenFile("likes.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+
+	var likes = &like{}
+	err = likes.loadLikes("./likes.json")
 	if err != nil {
 		panic(err)
-	}
-	err = json.NewDecoder(likedFile).Decode(&liked)
-	if err != nil {
-		srvlog.Warn("could not decode liked json", "error", err)
 	}
 	//Directory for song/album art images
 	os.Mkdir("artcache", 0755)
 	//Parse songs
 	songs, filemap := (getSongs(*path))
-	//Id cache for checking stuff
-	for _, v := range songs {
-		idcache[v.ID] = true
-	}
-	//Count how many liked tracks we currently have loaded in memory
-	for k := range idcache {
-		if _, ok := liked[k]; ok {
-			likedCount++
-		}
-	}
+	//Likes
+	var library = &library{}
+	library.songs = songs
+	library.likes = likes
+	library.buildIDcache()
+	library.idcache.getCachedPaths(filemap)
 	mux := httprouter.New()
 	mux.NotFound = http.FileServer(http.Dir("public"))
 	mux.HandlerFunc("GET", "/count", countPlay(playcount))
-	mux.HandlerFunc("GET", "/stream", getStream(filemap))
+	mux.Handler("GET", "/stream", pass.mustAuth(library.idcache))
 	mux.HandlerFunc("GET", "/art", artwork)
-	mux.HandlerFunc("GET", "/api", getAPI(songs))
-	mux.HandlerFunc("GET", "/like", likes(liked))
-	mux.HandlerFunc("POST", "/login", login(passArg.password))
+	mux.Handler("GET", "/api", library)
+	mux.Handler("GET", "/like", pass.mustAuth(likes))
+	mux.HandlerFunc("POST", "/login", login(pass.password))
 	fmt.Printf("Serving over: http://127.0.0.1:%d\n", *port)
 	err = http.ListenAndServe(fmt.Sprintf(":%d", *port), mux)
 	srvlog.Crit("server crashed", "error", err)

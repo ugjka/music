@@ -16,7 +16,7 @@ import (
 //Process audio files, extract info/artwork
 //
 
-func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
+func getSongs(searchdir string) (songs songs, filemap map[string]string) {
 	cache := make(map[string]song)
 	cachef, err := os.OpenFile("cache.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
@@ -40,7 +40,7 @@ func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
 			return nil
 		}
 		if v, ok := cache[path]; ok {
-			songs = append(songs, &v)
+			songs = append(songs, v)
 			filemap[v.ID] = path
 			return nil
 		}
@@ -73,9 +73,9 @@ func getSongs(searchdir string) (songs []*song, filemap map[string]string) {
 			art.Close()
 		}
 		filemap[hash] = path
-		result := &song{Artist: artist, Title: title, Album: album, Track: track, ID: hash, path: path}
+		result := song{Artist: artist, Title: title, Album: album, Track: track, ID: hash, path: path}
 		songs = append(songs, result)
-		cache[path] = *result
+		cache[path] = result
 		return nil
 	})
 	err = cachef.Truncate(0)

@@ -32,6 +32,12 @@ func login(hash string) http.HandlerFunc {
 
 type passwordFlag struct {
 	password string
+	next     http.Handler
+}
+
+func (pass passwordFlag) mustAuth(handler http.Handler) http.Handler {
+	pass.next = handler
+	return pass
 }
 
 func (pass *passwordFlag) String() string {
@@ -43,15 +49,15 @@ func (pass *passwordFlag) Set(value string) error {
 	return nil
 }
 
-func authorize(w http.ResponseWriter, r *http.Request) error {
+func (pass passwordFlag) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("secret")
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		return err
+		return
 	}
-	if cookie.Value != passArg.password {
+	if cookie.Value != pass.password {
 		w.WriteHeader(http.StatusUnauthorized)
-		return fmt.Errorf("Password and secret do not match")
+		return
 	}
-	return nil
+	pass.next.ServeHTTP(w, r)
 }
