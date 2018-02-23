@@ -14,15 +14,14 @@ import (
 	log "gopkg.in/inconshreveable/log15.v2"
 )
 
-//Globals
 var srvlog = log.New("module", "app/server")
-var enableFlac *bool
-var pass passwordFlag
 
 func main() {
 	//Flags
+	var pass passwordFlag
 	pass.password = base64.URLEncoding.EncodeToString(sha3.New512().Sum([]byte("")))
 	flag.Var(&pass, "password", "set password")
+	var enableFlac *bool
 	enableFlac = flag.Bool("enableFlac", false, "Enable Flac streaming")
 	port := flag.Uint("port", 8080, "Server Port")
 	path := flag.String("path", "./music", "Directory containing your mp3 files")
@@ -38,8 +37,8 @@ func main() {
 	var err error
 	//Directory for song/album art images
 	os.Mkdir("artcache", 0755)
-	//Parse songs
-	songs := getSongs(*path)
+	//Parse audio files
+	songs := getSongs(*path, *enableFlac)
 
 	var likes = &like{}
 	err = likes.load("./likes.json")
@@ -47,7 +46,7 @@ func main() {
 		panic(err)
 	}
 
-	var counts = &count{}
+	var counts = &counts{}
 	err = counts.load("./playcount.json")
 	if err != nil {
 		panic(err)

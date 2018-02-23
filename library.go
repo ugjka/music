@@ -10,7 +10,7 @@ type library struct {
 	songs   songs
 	idcache *idcache
 	likes   *like
-	counts  *count
+	counts  *counts
 	sync.RWMutex
 }
 

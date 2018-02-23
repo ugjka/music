@@ -16,7 +16,7 @@ import (
 //Process audio files, extract info/artwork
 //
 
-func getSongs(searchdir string) (songs songs) {
+func getSongs(searchdir string, flac bool) (songs songs) {
 	cache := make(map[string]song)
 	cachef, err := os.OpenFile("cache.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
@@ -31,7 +31,7 @@ func getSongs(searchdir string) (songs songs) {
 		if info.IsDir() {
 			return nil
 		}
-		if !(strings.HasSuffix(path, ".mp3") || (strings.HasSuffix(path, ".flac") && *enableFlac)) {
+		if !(strings.HasSuffix(path, ".mp3") || (strings.HasSuffix(path, ".flac") && flac)) {
 			srvlog.Info("skipping invalid file", "file", info.Name())
 			return nil
 		}

@@ -7,13 +7,13 @@ import (
 	"sync"
 )
 
-type count struct {
+type counts struct {
 	*os.File
 	sync.RWMutex
 	db map[string]int64
 }
 
-func (count *count) load(filename string) (err error) {
+func (count *counts) load(filename string) (err error) {
 	count.db = make(map[string]int64)
 	count.File, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
@@ -26,7 +26,7 @@ func (count *count) load(filename string) (err error) {
 	return nil
 }
 
-func (count *count) save() error {
+func (count *counts) save() error {
 	count.Lock()
 	defer count.Unlock()
 	defer count.File.Sync()
@@ -40,7 +40,7 @@ func (count *count) save() error {
 	return err
 }
 
-func (count *count) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (count *counts) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		return
