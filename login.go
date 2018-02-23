@@ -23,9 +23,9 @@ func login(hash string) http.HandlerFunc {
 		}
 		if secret == hash {
 			json.NewEncoder(w).Encode(true)
-		} else {
-			json.NewEncoder(w).Encode(false)
+			return
 		}
+		json.NewEncoder(w).Encode(false)
 
 	}
 }
