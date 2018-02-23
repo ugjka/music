@@ -15,7 +15,7 @@ type like struct {
 
 func (like *like) load(filename string) (err error) {
 	like.db = make(map[string]bool)
-	like.File, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	like.File, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		return err
 	}

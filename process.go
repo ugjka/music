@@ -18,7 +18,7 @@ import (
 
 func getSongs(searchdir string, flac bool) (songs songs) {
 	cache := make(map[string]song)
-	cachef, err := os.OpenFile("cache.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	cachef, err := os.OpenFile("cache.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		panic(err)
 	}

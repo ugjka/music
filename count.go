@@ -15,7 +15,7 @@ type counts struct {
 
 func (count *counts) load(filename string) (err error) {
 	count.db = make(map[string]int64)
-	count.File, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	count.File, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
 		return err
 	}
