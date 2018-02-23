@@ -39,7 +39,7 @@ func main() {
 	//Directory for song/album art images
 	os.Mkdir("artcache", 0755)
 	//Parse songs
-	songs, filemap := (getSongs(*path))
+	songs, filemap := getSongs(*path)
 
 	var likes = &like{}
 	err = likes.load("./likes.json")
@@ -58,7 +58,7 @@ func main() {
 	library.likes = likes
 	library.counts = counts
 	library.makeCache()
-	library.idcache.getCachedPaths(filemap)
+	library.idcache.getPaths(filemap)
 
 	mux := httprouter.New()
 	mux.NotFound = http.FileServer(http.Dir("public"))

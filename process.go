@@ -40,6 +40,7 @@ func getSongs(searchdir string) (songs songs, filemap map[string]string) {
 			return nil
 		}
 		if v, ok := cache[path]; ok {
+			v.path = path
 			songs = append(songs, v)
 			filemap[v.ID] = path
 			return nil
