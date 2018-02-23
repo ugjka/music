@@ -27,15 +27,12 @@ func getSongs(searchdir string) (songs songs) {
 	if err != nil {
 		srvlog.Warn("could not decode cache json", "error", err)
 	}
-	filepath.Walk(searchdir, func(path string, finfo os.FileInfo, err error) error {
-		if finfo.IsDir() {
-			return nil
-		}
-		if finfo.Name() == ".directory" {
+	filepath.Walk(searchdir, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
 			return nil
 		}
 		if !(strings.HasSuffix(path, ".mp3") || (strings.HasSuffix(path, ".flac") && *enableFlac)) {
-			srvlog.Info("skipping invalid file", "file", finfo.Name())
+			srvlog.Info("skipping invalid file", "file", info.Name())
 			return nil
 		}
 		if v, ok := cache[path]; ok {
@@ -51,7 +48,7 @@ func getSongs(searchdir string) (songs songs) {
 		defer f.Close()
 		m, err := tag.ReadFrom(f)
 		if err != nil {
-			srvlog.Warn("could not read tags", "file", finfo.Name())
+			srvlog.Warn("could not read tags", "file", info.Name())
 			return nil
 		}
 		artist := strings.TrimSpace(m.Artist())
@@ -60,11 +57,11 @@ func getSongs(searchdir string) (songs songs) {
 		track, _ := m.Track()
 		hash, err := tag.Sum(f)
 		if err != nil {
-			srvlog.Warn("could not hash the file", "file", finfo.Name())
+			srvlog.Warn("could not hash the file", "file", info.Name())
 			return nil
 		}
 		if m.Picture() != nil {
-			art, err := os.OpenFile(fmt.Sprintf("./artcache/%s", hash), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+			art, err := os.OpenFile(fmt.Sprintf("./artcache/%s", hash), os.O_RDWR|os.O_CREATE|os.O_APPEND|os.O_TRUNC, 0644)
 			if err != nil {
 				panic(err)
 			}
