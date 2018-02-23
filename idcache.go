@@ -11,14 +11,6 @@ type idcache struct {
 	sync.RWMutex
 }
 
-func (cache *idcache) getPaths(filemap map[string]string) {
-	for id, path := range filemap {
-		if _, ok := cache.db[id]; ok {
-			cache.db[id].path = path
-		}
-	}
-}
-
 // Serves Audio files
 func (cache *idcache) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
