@@ -13,7 +13,7 @@ type like struct {
 	sync.RWMutex
 }
 
-func (like *like) loadLikes(filename string) (err error) {
+func (like *like) load(filename string) (err error) {
 	like.db = make(map[string]bool)
 	like.File, err = os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
@@ -44,21 +44,23 @@ func (like *like) save() error {
 func (like *like) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if id := r.URL.Query().Get("id"); id != "" {
 		like.RLock()
-		defer like.RUnlock()
 		_, ok := like.db[id]
+		like.RUnlock()
 		json.NewEncoder(w).Encode(ok)
 		return
 	}
 	if liked := r.URL.Query().Get("like"); liked != "" {
-		like.Lock()
 		if _, ok := like.db[liked]; ok {
+			like.Lock()
 			delete(like.db, liked)
+			like.Unlock()
 			json.NewEncoder(w).Encode(false)
 		} else {
+			like.Lock()
 			like.db[liked] = true
+			like.Unlock()
 			json.NewEncoder(w).Encode(true)
 		}
-		like.Unlock()
 		err := like.save()
 		if err != nil {
 			srvlog.Crit("Could not save likes", "error", err)

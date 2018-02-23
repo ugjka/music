@@ -3,12 +3,10 @@ package main
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
 	"os"
-	"sync"
 
 	"golang.org/x/crypto/sha3"
 
@@ -18,9 +16,6 @@ import (
 
 //Globals
 var srvlog = log.New("module", "app/server")
-var playcountFile *os.File
-var playcount = make(map[string]int64)
-var apiMutex sync.Mutex
 var enableFlac *bool
 var pass passwordFlag
 
@@ -41,34 +36,33 @@ func main() {
 		return
 	}
 	var err error
-	//Create playcount store
-	playcountFile, err = os.OpenFile("playcount.json", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		panic(err)
-	}
-	err = json.NewDecoder(playcountFile).Decode(&playcount)
-	if err != nil {
-		srvlog.Warn("could not decode playcount json", "error", err)
-	}
-
-	var likes = &like{}
-	err = likes.loadLikes("./likes.json")
-	if err != nil {
-		panic(err)
-	}
 	//Directory for song/album art images
 	os.Mkdir("artcache", 0755)
 	//Parse songs
 	songs, filemap := (getSongs(*path))
-	//Likes
+
+	var likes = &like{}
+	err = likes.load("./likes.json")
+	if err != nil {
+		panic(err)
+	}
+
+	var counts = &count{}
+	err = counts.load("./playcount.json")
+	if err != nil {
+		panic(err)
+	}
+
 	var library = &library{}
 	library.songs = songs
 	library.likes = likes
-	library.buildIDcache()
+	library.counts = counts
+	library.makeCache()
 	library.idcache.getCachedPaths(filemap)
+
 	mux := httprouter.New()
 	mux.NotFound = http.FileServer(http.Dir("public"))
-	mux.HandlerFunc("GET", "/count", countPlay(playcount))
+	mux.Handler("GET", "/count", pass.mustAuth(library.counts))
 	mux.Handler("GET", "/stream", pass.mustAuth(library.idcache))
 	mux.HandlerFunc("GET", "/art", artwork)
 	mux.Handler("GET", "/api", library)
