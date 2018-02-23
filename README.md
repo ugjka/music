@@ -1,12 +1,15 @@
 # music
+
 Stream your god damned music hassle free
 
-### Note
+## Note
+
 use `-enableFlac` flag for flac support (not every browser supports flac file streaming)
 
 use `-password yourpass` flag to protect the website with password
 
-### Caveats
+## Caveats
+
 make sure your music is properly tagged, otherwise it will all be wonky
 
 ## install instructions
