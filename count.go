@@ -36,8 +36,7 @@ func (count *counts) save() error {
 	}
 	enc := json.NewEncoder(count.File)
 	enc.SetIndent("", "  ")
-	err = enc.Encode(count.db)
-	return err
+	return enc.Encode(count.db)
 }
 
 func (count *counts) ServeHTTP(w http.ResponseWriter, r *http.Request) {
