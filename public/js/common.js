@@ -1,4 +1,4 @@
-// Ugis Germanis
+// ugjka <esesmu@protonmail.com>
 // My javascript
 
 /*
