@@ -1,5 +1,7 @@
 # music
 
+[![Donate](https://dl.ugjka.net/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UVTCZYQ3FVNCY)
+
 Stream your god damned music hassle free
 
 ## Note
