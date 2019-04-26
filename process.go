@@ -32,7 +32,7 @@ func getSongs(searchdir string, flac bool) (songs songs) {
 			return nil
 		}
 		if !(strings.HasSuffix(path, ".mp3") || (strings.HasSuffix(path, ".flac") && flac)) {
-			srvlog.Info("skipping invalid file", "file", info.Name())
+			//srvlog.Info("skipping invalid file", "file", info.Name())
 			return nil
 		}
 		if v, ok := cache[path]; ok {
