@@ -7,46 +7,41 @@ Stream your god damned music hassle free
 
 ## Note
 
-use `-enableFlac` flag for flac support (not every browser supports flac file streaming)
+Use `-enableFlac` flag for flac support (not every browser supports flac file streaming).
 
-use `-password yourpass` flag to protect the website with password
+Use `-password yourpass` flag to protect the website with password.
 
 ## Caveats
 
-make sure your music is properly tagged, otherwise it will all be wonky
+Make sure your music is properly tagged, otherwise it will all be wonky.
 
-## install instructions
+## Install instructions
 
-`go get -u github.com/ugjka/music`
+```bash
+go get -u github.com/ugjka/music
+cd $GOPATH/src/github.com/ugjka/music/public
+bower install
+cd ..
+go build
+./music -path /path/to/mp3/collection -port 8080
+```
 
-`cd $GOPATH/src/github.com/ugjka/music/public`
+Navigate in your browser to: `http://127.0.0.1:8080/`
 
-`bower install`
-
-`cd ..`
-
-`go build`
-
-`./music -path /path/to/mp3/collection -port 8080`
-
-navigate in your browser to
-
-`http://127.0.0.1:8080/`
-
-Desktop view
+**Desktop view:**
 
 ![desktop](https://img.ugjka.net/1EICevTL.png)
 
 ![desktop](https://img.ugjka.net/FNYRvlRF.png)
 
-Mobile lockscreen
+**Mobile lockscreen:**
 
 ![mobile](https://img.ugjka.net/XPdyMKUk.png)
 
-Optional Password Protection
+**Optional Password Protection:**
 
 ![password](https://img.ugjka.net/fI5L62ap.png)
 
-
 ## License
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fugjka%2Fmusic.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fugjka%2Fmusic?ref=badge_large)
