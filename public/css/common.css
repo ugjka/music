@@ -10,6 +10,7 @@ body {
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
+    background-size: 80vmin auto;
     position: relative;
 }
 
