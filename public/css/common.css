@@ -82,7 +82,7 @@ footer {
 }
 
 #playlist {
-    padding-top: 120px;
+    padding-top: 60px;
     padding-bottom: 100px;
 }
 
@@ -139,4 +139,8 @@ footer {
 #passwordEnter {
     display: block;
     text-align: center;
+}
+
+#status {
+  margin-left: 20px;
 }
