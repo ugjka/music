@@ -9,7 +9,7 @@ import (
 func main() {
 	_, err := exec.LookPath("bower")
 	if err != nil {
-		fmt.Println("FATAL ERROR: could not find Bower executable\n" +
+		fmt.Println("FATAL ERROR: could not find Bower\n" +
 			"SEE: https://bower.io/ for installation instructions...")
 		return
 	}
@@ -18,10 +18,12 @@ func main() {
 		fmt.Printf("FATAL ERROR: could not descend into ./public folder: %v\n", err)
 		return
 	}
+	fmt.Println("*** INSTALLING WEBCOMPONENTS ***")
 	cmd := exec.Command("bower", "install", "--config.interactive=false", "-f")
-	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
-		fmt.Printf("FATAL ERROR: could not fetch the Bower dependencies: %v", err)
+		fmt.Printf("FATAL ERROR: could not fetch webcomponents: %v", err)
+		return
 	}
+	fmt.Println("*** SUCCESS ***")
 }
