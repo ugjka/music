@@ -32,9 +32,9 @@ Navigate in your browser to: `http://127.0.0.1:8080/`
 
 **Desktop view:**
 
-![desktop](https://img.ugjka.net/1EICevTL.png)
+![desktop](https://i.imgur.com/lPvCmbp.png)
 
-![desktop](https://img.ugjka.net/FNYRvlRF.png)
+![desktop](https://i.imgur.com/YV62t9G.png)
 
 **Mobile lockscreen:**
 
