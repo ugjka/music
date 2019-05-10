@@ -137,8 +137,7 @@ func (s songs) send(w http.ResponseWriter, r *http.Request) {
 
 func (s songs) shuffle() {
 	rand.Seed(time.Now().UnixNano())
-	for i := len(s) - 1; i > 0; i-- {
-		j := rand.Intn(i + 1)
+	rand.Shuffle(len(s), func(i int, j int) {
 		s[i], s[j] = s[j], s[i]
-	}
+	})
 }
