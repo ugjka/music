@@ -51,4 +51,5 @@ func (count *counts) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		srvlog.Crit("Could not save likes", "error", err)
 	}
+	json.NewEncoder(w).Encode(true)
 }
