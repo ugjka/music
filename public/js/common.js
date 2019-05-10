@@ -224,9 +224,9 @@ var music = {
     for (i = 0; i < this.playlist.length; i++) {
       var albumPrint = "";
       if (this.playlist[i].Track != 0) {
-        albumPrint = ["[", this.playlist[i].Track, "]", " ", this.playlist[i].Album].join("");
+        albumPrint = ["<div class='album'>[", this.playlist[i].Track, "]", " ", this.playlist[i].Album, "</div>"].join("");
       }
-      playlist.push("<li id='sound", i, "' class='song' index='", i, "'><div class='title'>", this.playlist[i].Title, " - ", this.playlist[i].Artist, "</div><div class='album'>", albumPrint, "</div></li>");
+      playlist.push("<li id='sound", i, "' class='song' index='", i, "'><div class='title'>", this.playlist[i].Title, " - ", this.playlist[i].Artist, "</div>", albumPrint, "</li>");
     }
     $("#playlist").append(playlist.join(""));
   },
