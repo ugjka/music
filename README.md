@@ -5,6 +5,13 @@
 
 Stream your god damned music hassle free
 
+## 2019.05 Update
+
+* Logout button
+* Focus on currently playing track button
+* Track number and album title on right side if the screen is big enough
+* Some ui improvements
+
 ## Note
 
 Use `-enableFlac` flag for flac support (not every browser supports flac file streaming).
