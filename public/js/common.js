@@ -97,6 +97,11 @@ window.addEventListener('WebComponentsReady', function() {
   document.getElementById("focus").addEventListener("click", function() {
     document.getElementById("sound" + music.current).scrollIntoView({ block: "center" });
   });
+  // Logout handler
+  document.getElementById("logout").addEventListener("click", function() {
+    $.removeCookie('secret');
+    location.reload();
+  });
   //Sort event handler
   //Get the playlist
   document.addEventListener("sort", function() {
@@ -173,6 +178,8 @@ window.addEventListener('WebComponentsReady', function() {
     function(data) {
       if (data === false) {
         login.open();
+      } else if ($.cookie("secret") == "pp9zzKI6msXItWfcGFp1bpfJghZP4lhZ4NHcwUdcgKYVshI68fX5TBHj6UAsOsVY9QAZnZW20-MBdYWGKB3NJg==") {
+        document.getElementById("logout").style.display = "none";
       }
     },
     "json"
