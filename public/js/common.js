@@ -39,7 +39,7 @@
 */
 
 // Set up stuff when webcomponents are ready
-window.addEventListener('WebComponentsReady', function(e) {
+window.addEventListener('WebComponentsReady', function() {
   console.log('webcomponents are ready!!!');
   //Slider events
   music.slider = document.getElementById("slider");
@@ -54,7 +54,7 @@ window.addEventListener('WebComponentsReady', function(e) {
     music.mainSound.setPosition((estimate / 1000) * e.target.value);
     music.sliderDrag = false;
   });
-  document.getElementById("menubutton").addEventListener("click", function(e) {
+  document.getElementById("menubutton").addEventListener("click", function() {
     startDrawer.toggle();
   });
   //Sorter
@@ -70,19 +70,19 @@ window.addEventListener('WebComponentsReady', function(e) {
     }
   }, false);
   //Playback controls
-  document.getElementById("next").addEventListener("click", function(e) {
+  document.getElementById("next").addEventListener("click", function() {
     playnext();
   });
-  document.getElementById("previous").addEventListener("click", function(e) {
+  document.getElementById("previous").addEventListener("click", function() {
     playprevious();
   });
-  document.getElementById("playit").addEventListener("click", function(e) {
+  document.getElementById("playit").addEventListener("click", function() {
     play();
   });
-  document.getElementById("pauseit").addEventListener("click", function(e) {
+  document.getElementById("pauseit").addEventListener("click", function() {
     pause();
   });
-  document.getElementById("favoriteit").addEventListener("click", function(e) {
+  document.getElementById("favoriteit").addEventListener("click", function() {
     //Set or Unset favorite
     $.get(
       [music.url, "/like"].join(""),
@@ -94,12 +94,12 @@ window.addEventListener('WebComponentsReady', function(e) {
     );
   });
   // Focus to playing handler
-  document.getElementById("focus").addEventListener("click", function(e) {
+  document.getElementById("focus").addEventListener("click", function() {
     document.getElementById("sound" + music.current).scrollIntoView({ block: "center" });
   });
   //Sort event handler
   //Get the playlist
-  document.addEventListener("sort", function(e) {
+  document.addEventListener("sort", function() {
     $.get(
       [music.url, "/api"].join(""),
       { "sort": music.selected },
@@ -177,7 +177,7 @@ window.addEventListener('WebComponentsReady', function(e) {
     },
     "json"
   );
-  document.getElementById("passwordEnter").addEventListener("click", function(e) {
+  document.getElementById("passwordEnter").addEventListener("click", function() {
     var pass = passwordInput.value;
     if (pass === undefined) {
       $("#passwordWrong").empty();
@@ -246,7 +246,6 @@ function playSong(id) {
       artwork: [{ src: [music.url, "/art?id=", music.playlist[id].ID].join(""), }],
     });
   }
-  document.getElementById()
   //Get if liked or not
   $.get(
     [music.url, "/like"].join(""),
