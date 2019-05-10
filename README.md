@@ -15,13 +15,15 @@ Use `-password yourpass` flag to protect the website with password.
 
 Make sure your music is properly tagged, otherwise it will all be wonky.
 
+Build needs Go with Go module support
+
 ## Install instructions
 
 ```bash
-go get -u github.com/ugjka/music
-cd $GOPATH/src/github.com/ugjka/music/public
-bower install
-cd ..
+export GO111MODULE=on
+git clone https://github.com/ugjka/music.git
+cd music
+go generate #requires Bower https://bower.io/
 go build
 ./music -path /path/to/mp3/collection -port 8080
 ```
