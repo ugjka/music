@@ -12,7 +12,7 @@
     "SoundManager2": "soundmanager2#*",
     "polymer": "^2.0.1",
     "app-layout": "PolymerElements/app-layout#^2.0.1",
-    "jquery": "^3.2.1",
+    "jquery": "^3.4.1",
     "iron-icons": "^2.0.1",
     "paper-icon-button": "^2.0.0",
     "paper-button": "^2.0.0",
