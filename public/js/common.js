@@ -198,9 +198,10 @@ window.addEventListener('WebComponentsReady', function() {
     );
   });
   document.getElementById("playlist").addEventListener('click', function(e) {
-    if (e.target && e.target.nodeName == "LI") {
+    var closest = e.target.closest("LI");
+    if (closest) {
       music.previous = music.current;
-      music.current = e.target.getAttribute("index");
+      music.current = closest.getAttribute("index");
       playSong(music.current);
     }
   });
@@ -221,7 +222,11 @@ var music = {
     $("#playlist").empty();
     var playlist = [""];
     for (i = 0; i < this.playlist.length; i++) {
-      playlist.push("<li id='sound", i, "' class='song' index='", i, "'>", this.playlist[i].Title, " - ", this.playlist[i].Artist, "</li>");
+      var albumPrint = "";
+      if (this.playlist[i].Track != 0) {
+        albumPrint = ["[", this.playlist[i].Track, "]", " ", this.playlist[i].Album].join("");
+      }
+      playlist.push("<li id='sound", i, "' class='song' index='", i, "'><div class='title'>", this.playlist[i].Title, " - ", this.playlist[i].Artist, "</div><div class='album'>", albumPrint, "</div></li>");
     }
     $("#playlist").append(playlist.join(""));
   },
