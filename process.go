@@ -78,7 +78,9 @@ func getSongs(searchdir string, flac bool) (songs songs) {
 		srvlog.Warn("could not truncate cache file", "error", err)
 		return
 	}
-	err = json.NewEncoder(cachef).Encode(cache)
+	enc := json.NewEncoder(cachef)
+	enc.SetIndent("", "\t")
+	err = enc.Encode(cache)
 	if err != nil {
 		srvlog.Warn("could not encode cache json", "error", err)
 	}
