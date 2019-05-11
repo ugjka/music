@@ -5,7 +5,11 @@
 
 Stream your god damned music hassle free
 
-## 2019.05 Update
+# Demo
+
+https://demo.ugjka.net/
+
+# 2019.05 Update
 
 * Use html tables for the playlist
 * Logout button
