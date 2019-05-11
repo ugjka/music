@@ -7,6 +7,7 @@ Stream your god damned music hassle free
 
 ## 2019.05 Update
 
+* Use html tables for the playlist
 * Logout button
 * Focus on currently playing track button
 * Track number and album title on right side if the screen is big enough
@@ -40,9 +41,9 @@ Navigate in your browser to: `http://127.0.0.1:8080/`
 
 **Desktop view:**
 
-![desktop](https://i.imgur.com/t3iFQPt.png)
+![desktop](https://i.imgur.com/ceqI4LJ.png)
 
-![desktop](https://i.imgur.com/Htb8FNt.png)
+![desktop](https://i.imgur.com/OAIx2Vz.png)
 
 **Mobile lockscreen:**
 
@@ -50,7 +51,7 @@ Navigate in your browser to: `http://127.0.0.1:8080/`
 
 **Optional Password Protection:**
 
-![password](https://i.imgur.com/Eh521tF.png)
+![password](https://i.imgur.com/SLsa9EQ.png)
 
 ## License
 
