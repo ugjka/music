@@ -11,6 +11,7 @@ Stream your god damned music hassle free
 * Focus on currently playing track button
 * Track number and album title on right side if the screen is big enough
 * Some ui improvements
+* Coincidentally KDE browser integration plugin works OOB for those who use it
 
 ## Note
 
