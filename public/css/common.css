@@ -85,7 +85,8 @@ footer {
 #playlist {
     padding-top: 60px;
     padding-bottom: 100px;
-    display: grid;
+    display: block;
+    font-weight: normal;
 }
 
 [playing=true] {
@@ -147,18 +148,38 @@ footer {
   margin-left: 20px;
 }
 
+.title, .artist {
+  text-align: left;
+}
+
 .title {
-  float: left;
+  width: 30%;
+  max-width: 390px;
 }
 
 .album {
-  float: right;
+  text-align: right;
   padding-right: 20px;
 }
-
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 800px) {
   .album {
     display: none;
+  }
+  #playlist {
+    display: grid;
+  }
+  .artist::before {
+      content: " - ";
+  }
+  .title {
+    width: auto;
+    float: left;
+  }
+  .artist {
+    float: left;
+  }
+  tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.1);
   }
 }
 

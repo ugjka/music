@@ -205,7 +205,7 @@ window.addEventListener('WebComponentsReady', function() {
     );
   });
   document.getElementById("playlist").addEventListener('click', function(e) {
-    var closest = e.target.closest("LI");
+    var closest = e.target.closest("TR");
     if (closest) {
       music.previous = music.current;
       music.current = closest.getAttribute("index");
@@ -231,9 +231,15 @@ var music = {
     for (i = 0; i < this.playlist.length; i++) {
       var albumPrint = "";
       if (this.playlist[i].Track != 0) {
-        albumPrint = ["<div class='album'>[", this.playlist[i].Track, "]", " ", this.playlist[i].Album, "</div>"].join("");
+        albumPrint = ["<td class='album'>[", this.playlist[i].Track, "]", " ", this.playlist[i].Album, "</td>"].join("");
       }
-      playlist.push("<li id='sound", i, "' class='song' index='", i, "'><div class='title'>", this.playlist[i].Title, " - ", this.playlist[i].Artist, "</div>", albumPrint, "</li>");
+      playlist.push(
+        "<tr id='sound", i, "' class='song' index='", i, "'>",
+        "<td class='title'>", this.playlist[i].Title, "</td>",
+        "<td class='artist'>", this.playlist[i].Artist, "</td>",
+        albumPrint,
+        "</tr>"
+      );
     }
     $("#playlist").append(playlist.join(""));
   },
