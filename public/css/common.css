@@ -86,6 +86,14 @@ footer {
   width: 100%;
 }
 
+.song:nth-child(even):not([playing=true]) {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.song:nth-child(even):not([playing=true]):hover {
+  background-color: #ff9090;
+}
+
 [playing=true] {
   background-color: red;
 }
@@ -156,10 +164,6 @@ footer {
 .album {
   text-align: right;
   padding-right: 20px;
-}
-
-tr:nth-child(even):not([playing=true]) {
-  background-color: rgba(0, 0, 0, 0.06);
 }
 
 @media screen and (max-width: 800px) {
