@@ -1,4 +1,4 @@
-// ugjka <esesmu@protonmail.com>
+//ugjka <esesmu@protonmail.com>
 // My javascript
 
 /*
