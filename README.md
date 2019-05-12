@@ -45,9 +45,9 @@ Navigate in your browser to: `http://127.0.0.1:8080/`
 
 **Desktop view:**
 
-![desktop](https://i.imgur.com/ceqI4LJ.png)
+![desktop](https://i.imgur.com/FeleWvb.png)
 
-![desktop](https://i.imgur.com/OAIx2Vz.png)
+![desktop](https://i.imgur.com/AAXh2vn.png)
 
 **Mobile lockscreen:**
 
@@ -55,7 +55,7 @@ Navigate in your browser to: `http://127.0.0.1:8080/`
 
 **Optional Password Protection:**
 
-![password](https://i.imgur.com/SLsa9EQ.png)
+![password](https://i.imgur.com/MOFEkvc.png)
 
 ## License
 
