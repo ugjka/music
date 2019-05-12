@@ -1,5 +1,5 @@
 /* My css styling
-	ugjka <esesmu@protonmail.com>
+  ugjka <esesmu@protonmail.com>
 */
 
 body {
@@ -83,10 +83,10 @@ footer {
 }
 
 #playlist {
+    display: table;
     padding-top: 60px;
     padding-bottom: 100px;
-    display: block;
-    font-weight: normal;
+    width: 100%;
 }
 
 [playing=true] {
@@ -154,17 +154,11 @@ footer {
 
 .title {
   width: 30%;
-  max-width: 390px;
-}
-
-.artist {
-  width: 40%;
 }
 
 .album {
   text-align: right;
   padding-right: 20px;
-  width: 100%;
 }
 @media screen and (max-width: 800px) {
   .album {
@@ -174,8 +168,8 @@ footer {
     display: grid;
   }
   .title {
-    width: auto;
     float: left;
+    width: auto;
   }
   .artist {
     float: right;
