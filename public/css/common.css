@@ -157,6 +157,10 @@ footer {
   max-width: 390px;
 }
 
+.artist {
+  width: 40%;
+}
+
 .album {
   text-align: right;
   padding-right: 20px;
@@ -175,6 +179,7 @@ footer {
   }
   .artist {
     float: right;
+    width: auto;
   }
   tr:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.1);
