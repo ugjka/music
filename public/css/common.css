@@ -29,159 +29,157 @@ body::after {
 }
 
 #startDrawer {
-  --app-drawer-content-container: {box-shadow: 1px 0 2px 1px rgba(0, 0, 0, 0.18);
-};
-
-z-index: 100;
-    margin-bottom: 20px;
+  --app-drawer-content-container: {box-shadow: 1px 0 2px 1px rgba(0, 0, 0, 0.18);};
+  z-index: 100;
+  margin-bottom: 20px;
 }
 
 #startDrawerWrap {
-overflow: auto;
-height: 100%;
+  overflow: auto;
+  height: 100%;
 }
 
 app-header {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-background-color: #4285f4;
-color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #4285f4;
+  color: #fff;
 }
 
 app-header paper-icon-button {
---paper-icon-button-ink-color: white;
+  --paper-icon-button-ink-color: white;
 }
 
 paper-button {
-font-family: 'Roboto', 'Noto', sans-serif;
-font-weight: normal;
-font-size: 14px;
--webkit-font-smoothing: antialiased;
-background-color: var(--paper-green-500);
-color: white;
-width: 90%;
-margin-top: 20px;
-margin-left: auto;
-margin-right: auto;
-display: block;
+  font-family: 'Roboto', 'Noto', sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--paper-green-500);
+  color: white;
+  width: 90%;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 paper-button[active] {
-background-color: var(--paper-red-500);
+  background-color: var(--paper-red-500);
 }
 
 footer {
-position: fixed;
-height: 70px;
-left: 0;
-bottom: 0;
-right: 0;
-background-color: #4285f4;
+  position: fixed;
+  height: 70px;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: #4285f4;
 }
 
 #playlist {
-display: table;
-padding-top: 60px;
-padding-bottom: 100px;
-width: 100%;
+  display: table;
+  padding-top: 60px;
+  padding-bottom: 100px;
+  width: 100%;
 }
 
 [playing=true] {
-background-color: red;
+  background-color: red;
 }
 
 .song:hover {
-background-color: #ff9090;
+  background-color: #ff9090;
 }
 
 [playing=true]:hover {
-background-color: red;
+  background-color: red;
 }
 
 [playing=true]>.title::before {
-content: "► ";
+  content: "► ";
 }
 
 #slider {
-display: block;
-margin-left: auto;
-margin-right: auto;
-width: 95%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 95%;
 }
 
 #controls {
-display: block;
-width: 222px;
-margin-left: auto;
-margin-right: auto;
+  display: block;
+  width: 222px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 [loading=true]::after {
-content: "Loading...";
-text-align: center;
-display: block;
-width: 100%;
+  content: "Loading...";
+  text-align: center;
+  display: block;
+  width: 100%;
 }
 
 #favoriteit {
-width: 33px;
-height: 33px;
+  width: 33px;
+  height: 33px;
 }
 
 [favorited=true] {
-color: red;
+  color: red;
 }
 
 [favorited=false] {
-color: black;
+  color: black;
 }
 
 #passwordEnter {
-display: block;
-text-align: center;
+  display: block;
+  text-align: center;
 }
 
 #status {
-margin-left: 20px;
+  margin-left: 20px;
 }
 
 .title, .artist {
-text-align: left;
+  text-align: left;
 }
 
 .title {
-width: 30%;
+  width: 30%;
 }
 
 .album {
-text-align: right;
-padding-right: 20px;
+  text-align: right;
+  padding-right: 20px;
 }
 
 @media screen and (max-width: 800px) {
-.album {
-  display: none;
-}
+  .album {
+    display: none;
+  }
 
-#playlist {
-  display: grid;
-}
+  #playlist {
+    display: grid;
+  }
 
-.title {
-  float: left;
-  width: auto;
-}
+  .title {
+    float: left;
+    width: auto;
+  }
 
-.artist {
-  float: right;
-  width: auto;
-}
+  .artist {
+    float: right;
+    width: auto;
+  }
 
-tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.1);
-}
+  tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 }
 
 #slider {
