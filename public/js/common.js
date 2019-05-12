@@ -232,6 +232,8 @@ var music = {
       var albumPrint = "";
       if (this.playlist[i].Track != 0) {
         albumPrint = ["<td class='album'>[", this.playlist[i].Track, "]", " ", this.playlist[i].Album, "</td>"].join("");
+      } else {
+        albumPrint = "<td class='album'></td>";
       }
       playlist.push(
         "<tr id='sound", i, "' class='song' index='", i, "'>",

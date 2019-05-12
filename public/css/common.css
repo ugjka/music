@@ -158,6 +158,10 @@ footer {
   padding-right: 20px;
 }
 
+tr:nth-child(even):not([playing=true]) {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
 @media screen and (max-width: 800px) {
   .album {
     display: none;
@@ -175,10 +179,6 @@ footer {
   .artist {
     float: right;
     width: auto;
-  }
-
-  tr:nth-child(even):not([playing=true]) {
-    background-color: rgba(0, 0, 0, 0.1);
   }
 }
 
