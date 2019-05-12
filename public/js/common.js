@@ -264,7 +264,7 @@ function playSong(id) {
       artwork: [{ src: [music.url, "/art?id=", music.playlist[id].ID].join(""), }],
     });
   }
-  document.title = ["🎶", music.playlist[music.current].Title, "by", music.playlist[music.current].Artist, "🎶"].join(" ");
+  document.title = [music.playlist[music.current].Title, "by", music.playlist[music.current].Artist].join(" ");
   //Get if liked or not
   $.get(
     [music.url, "/like"].join(""),
