@@ -177,7 +177,7 @@ footer {
     width: auto;
   }
 
-  tr:nth-child(even) {
+  tr:nth-child(even):not([playing=true]) {
     background-color: rgba(0, 0, 0, 0.1);
   }
 }
