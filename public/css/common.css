@@ -29,10 +29,8 @@ body::after {
 }
 
 #startDrawer {
-  --app-drawer-content-container: {
-        box-shadow: 1px 0 2px 1px rgba(0, 0, 0, 0.18);
-}
-    ;
+  --app-drawer-content-container: {box-shadow: 1px 0 2px 1px rgba(0, 0, 0, 0.18);
+};
 
 z-index: 100;
     margin-bottom: 20px;
