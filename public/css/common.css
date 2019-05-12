@@ -169,15 +169,12 @@ footer {
   #playlist {
     display: grid;
   }
-  .artist::before {
-      content: " - ";
-  }
   .title {
     width: auto;
     float: left;
   }
   .artist {
-    float: left;
+    float: right;
   }
   tr:nth-child(even) {
     background-color: rgba(0, 0, 0, 0.1);
