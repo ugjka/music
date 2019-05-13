@@ -1,6 +1,8 @@
-public/bower_components/*
-public/node_modules/*
-public/package-lock.json
+build/node_modules/*
+build/package-lock.json
+public/*
+!public/*.ico
+!public/*.gif
 music/
 music
 cache.json
