@@ -1,5 +1,6 @@
 public/bower_components/*
 public/node_modules/*
+public/package-lock.json
 music/
 music
 cache.json
