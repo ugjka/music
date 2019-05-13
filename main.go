@@ -59,7 +59,7 @@ func main() {
 	library.makeCache()
 
 	mux := httprouter.New()
-	mux.NotFound = http.FileServer(http.Dir("public"))
+	mux.NotFound = http.FileServer(http.Dir("build/app/public"))
 	mux.Handler("GET", "/count", pass.mustAuth(library.counts))
 	mux.Handler("GET", "/stream", pass.mustAuth(library.idcache))
 	mux.HandlerFunc("GET", "/art", artwork)
