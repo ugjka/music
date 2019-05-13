@@ -184,7 +184,16 @@ window.addEventListener('WebComponentsReady', function() {
     },
     "json"
   );
+  document.getElementById("passwordInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      loginNow();
+    }
+  });
   document.getElementById("passwordEnter").addEventListener("click", function() {
+    loginNow();
+  });
+
+  function loginNow() {
     var pass = passwordInput.value;
     if (pass === undefined) {
       $("#passwordWrong").empty();
@@ -203,7 +212,8 @@ window.addEventListener('WebComponentsReady', function() {
       },
       "json"
     );
-  });
+  }
+
   document.getElementById("playlist").addEventListener('click', function(e) {
     var closest = e.target.closest("TR");
     if (closest) {
