@@ -9,15 +9,6 @@ Stream your god damned music hassle free
 
 https://demo.ugjka.net/
 
-# 2019.05 Update
-
-* Use html tables for the playlist
-* Logout button
-* Focus on currently playing track button
-* Track number and album title on right side if the screen is big enough
-* Some ui improvements
-* Coincidentally KDE browser integration plugin works OOB for those who use it
-
 ## Note
 
 Use `-enableFlac` flag for flac support (not every browser supports flac file streaming).
@@ -33,6 +24,7 @@ Build needs Go with Go module support
 ## Install instructions
 
 ```bash
+npm install -g polymer-cli
 export GO111MODULE=on
 git clone https://github.com/ugjka/music.git
 cd music
