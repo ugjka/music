@@ -1,4 +1,5 @@
 public/bower_components/*
+public/node_modules/*
 music/
 music
 cache.json
