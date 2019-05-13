@@ -36,7 +36,7 @@ func main() {
 	fmt.Println("*** SUCCESS ***")
 	err = os.Chdir("../")
 	if err != nil {
-		fmt.Printf("FATAL ERROR: could not descend into main folder: %v\n", err)
+		fmt.Printf("FATAL ERROR: could not return to the main folder: %v\n", err)
 		return
 	}
 	fmt.Println("*** BUILDING POLYMER SOURCES ***")
