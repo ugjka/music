@@ -1,0 +1,21 @@
+{
+  "root": "public",
+  "entrypoint": "index.html",
+  "shell": "shell.js",
+  "fragments": [],
+  "sources": [
+   "favicon.ico",
+   "loader.gif",
+   "js/*",
+   "css/*"
+  ],
+  "extraDependencies": [],
+  "moduleResolution": "node",
+  "npm": true,
+  "builds": [
+    {
+      "name": "app",
+      "bundle": true
+    }
+  ]
+}
