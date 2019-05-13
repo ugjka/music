@@ -1,5 +1,4 @@
 public/node_modules/*
-public/package-lock.json
 music/
 music
 cache.json
