@@ -18,7 +18,7 @@ body::after {
   background-color: white;
   content: "";
   opacity: 0.6;
-  height: 100%;
+  height: 100vmax;
   width: 100%;
   display: block;
   z-index: -1;
