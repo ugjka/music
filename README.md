@@ -19,16 +19,15 @@ Use `-password yourpass` flag to protect the website with password.
 
 Make sure your music is properly tagged, otherwise it will all be wonky.
 
-Build needs Go with Go module support
+Build needs Go with Go module support and node.js NPM
 
 ## Install instructions
 
 ```bash
-npm install -g polymer-cli
 export GO111MODULE=on
 git clone https://github.com/ugjka/music.git
 cd music
-go generate #requires Bower https://bower.io/
+go generate #requires NPM, see https://nodejs.org
 go build
 ./music -path /path/to/mp3/collection -port 8080
 ```
