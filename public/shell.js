@@ -14,3 +14,6 @@ import '@polymer/paper-button/paper-button.js';
 import '@polymer/iron-icons/av-icons.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-input/paper-input.js';
+import 'soundmanager2/script/soundmanager2.js';
+import 'jquery/dist/jquery.js';
+import 'jquery.cookie/jquery.cookie.js';
