@@ -1,3 +1,5 @@
+node_modules/*
+package-lock.json
 build/*
 public/node_modules/*
 music/
