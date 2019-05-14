@@ -13,11 +13,19 @@ func main() {
 			"SEE: https://nodejs.org/ for installation instructions...")
 		return
 	}
-	_, err = exec.LookPath("polymer")
+	_, err = os.Stat("./node_modules/.bin/polymer")
 	if err != nil {
-		fmt.Println("FATAL ERROR: could not find Polymer CLI\n" +
-			"SEE: https://polymer-library.polymer-project.org/3.0/docs/tools/polymer-cli for installation instructions...")
-		return
+		fmt.Println("ERROR: Could not find Polymer CLI")
+		fmt.Println("*** INSTALLING POLYMER-CLI ***")
+		cmd := exec.Command("npm", "install", "--prefix=./", "polymer-cli")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err := cmd.Run()
+		if err != nil {
+			fmt.Printf("FATAL ERROR: Could not install Polymer-CLI: %v\n", err)
+			return
+		}
+		fmt.Println("*** SUCCESS ***")
 	}
 	err = os.Chdir("./public")
 	if err != nil {
@@ -40,7 +48,7 @@ func main() {
 		return
 	}
 	fmt.Println("*** BUILDING POLYMER SOURCES ***")
-	cmd = exec.Command("polymer", "build")
+	cmd = exec.Command("./node_modules/.bin/polymer", "build")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
