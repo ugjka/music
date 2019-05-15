@@ -55,22 +55,19 @@ const music = {
 
 //Slider events
 music.slider = document.getElementById("slider");
-slider.addEventListener("mousedown", function() {
-  music.sliderDrag = true;
-});
-slider.addEventListener("mouseup", function() {
-  music.sliderDrag = false;
-});
-slider.addEventListener("change", function(e) {
+
+slider.addEventListener("mousedown", () => { music.sliderDrag = true; });
+slider.addEventListener("mouseup", () => { music.sliderDrag = false; });
+
+slider.addEventListener("change", e => {
   let estimate = music.mainSound.durationEstimate;
   music.mainSound.setPosition((estimate / 1000) * e.target.value);
   music.sliderDrag = false;
 });
-document.getElementById("menubutton").addEventListener("click", function() {
-  startDrawer.toggle();
-});
+
+document.getElementById("menubutton").addEventListener("click", () => { startDrawer.toggle(); });
 //Sorter
-document.getElementById("startDrawer").addEventListener("change", function(e) {
+document.getElementById("startDrawer").addEventListener("change", e => {
   if (e.target && e.target.nodeName == "PAPER-BUTTON") {
     var sorters = document.getElementsByClassName("sorter");
     for (let i = 0; sorters.length > i; i++) {
@@ -82,45 +79,38 @@ document.getElementById("startDrawer").addEventListener("change", function(e) {
   }
 }, false);
 //Playback controls
-document.getElementById("next").addEventListener("click", function() {
-  playnext();
-});
-document.getElementById("previous").addEventListener("click", function() {
-  playprevious();
-});
-document.getElementById("playit").addEventListener("click", function() {
-  play();
-});
-document.getElementById("pauseit").addEventListener("click", function() {
-  pause();
-});
-document.getElementById("favoriteit").addEventListener("click", function() {
+document.getElementById("next").addEventListener("click", () => { playnext(); });
+document.getElementById("previous").addEventListener("click", () => { playprevious(); });
+document.getElementById("playit").addEventListener("click", () => { play(); });
+document.getElementById("pauseit").addEventListener("click", () => { pause(); });
+
+document.getElementById("favoriteit").addEventListener("click", () => {
   //Set or Unset favorite
   $.get(
     [music.url, "/like"].join(""),
     { "like": music.playlist[music.current].ID },
-    function(data) {
+    data => {
       document.getElementById("favoriteit").setAttribute("favorited", data);
     },
     "json"
   );
 });
 // Focus to playing handler
-document.getElementById("focus").addEventListener("click", function() {
+document.getElementById("focus").addEventListener("click", () => {
   document.getElementById("sound" + music.current).scrollIntoView({ block: "center" });
 });
 // Logout handler
-document.getElementById("logout").addEventListener("click", function() {
+document.getElementById("logout").addEventListener("click", () => {
   $.removeCookie('secret');
   location.reload();
 });
 //Sort event handler
 //Get the playlist
-document.addEventListener("sort", function() {
+document.addEventListener("sort", () => {
   $.get(
     [music.url, "/api"].join(""),
     { "sort": music.selected },
-    function(data) {
+    data => {
       music.playlist = data;
       $("#playlist").attr('loading', true);
       music.render();
@@ -172,22 +162,14 @@ document.getElementById(music.selected).active = true;
 document.dispatchEvent(music.sort);
 //Set up Media Session API controls
 if ('mediaSession' in navigator) {
-  navigator.mediaSession.setActionHandler('nexttrack', function() {
-    playnext();
-  });
-  navigator.mediaSession.setActionHandler('previoustrack', function() {
-    playprevious();
-  });
-  navigator.mediaSession.setActionHandler('play', function() {
-    play();
-  });
-  navigator.mediaSession.setActionHandler('pause', function() {
-    pause();
-  });
+  navigator.mediaSession.setActionHandler('nexttrack', () => { playnext(); });
+  navigator.mediaSession.setActionHandler('previoustrack', () => { playprevious(); });
+  navigator.mediaSession.setActionHandler('play', () => { play(); });
+  navigator.mediaSession.setActionHandler('pause', () => { pause(); });
 }
 //Handle login
 $.post(`${music.url}/login`, { password: "", secret: $.cookie("secret") },
-  function(data) {
+  data => {
     if (data === false) {
       login.open();
     } else if ($.cookie("secret") == "pp9zzKI6msXItWfcGFp1bpfJghZP4lhZ4NHcwUdcgKYVshI68fX5TBHj6UAsOsVY9QAZnZW20-MBdYWGKB3NJg==") {
@@ -196,12 +178,12 @@ $.post(`${music.url}/login`, { password: "", secret: $.cookie("secret") },
   },
   "json"
 );
-document.getElementById("passwordInput").addEventListener("keydown", function(e) {
+document.getElementById("passwordInput").addEventListener("keydown", e => {
   if (e.key === "Enter") {
     loginNow();
   }
 });
-document.getElementById("passwordEnter").addEventListener("click", function() {
+document.getElementById("passwordEnter").addEventListener("click", () => {
   loginNow();
 });
 
@@ -213,7 +195,7 @@ function loginNow() {
     return;
   }
   $.post(`${music.url}/login`, { password: pass },
-    function(data) {
+    data => {
       if (data === false) {
         login.open();
         $("#passwordWrong").empty();
@@ -226,7 +208,7 @@ function loginNow() {
   );
 }
 
-document.getElementById("playlist").addEventListener('click', function(e) {
+document.getElementById("playlist").addEventListener('click', e => {
   var closest = e.target.closest("TR");
   if (closest) {
     music.previous = music.current;
@@ -259,7 +241,7 @@ function playSong(id) {
   $.get(
     `${music.url}/like`,
     { "id": music.playlist[id].ID },
-    function(data) {
+    data => {
       document.getElementById("favoriteit").setAttribute("favorited", data);
     },
     "json"
