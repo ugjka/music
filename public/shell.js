@@ -27,7 +27,7 @@ const music = {
   slider: null,
   sliderDrag: false,
   //Render the playlist
-  render: function() {
+  render() {
     $("#playlist").empty();
     let playlist = [""];
     for (let i = 0; i < this.playlist.length; i++) {
@@ -124,12 +124,12 @@ soundManager.setup({
   url: 'bower_components/SoundManager2/swf/soundmanager2_flash9.swf',
   flashVersion: 9,
   preferFlash: false,
-  onready: function() {
+  onready() {
     soundManager.createSound({
       id: "main",
       url: "",
       multiShot: false,
-      onfinish: function() {
+      onfinish() {
         music.previous = music.current;
         $(["#sound", music.current].join("")).attr("playing", false);
         if (music.current == (music.playlist.length - 1)) {
@@ -144,11 +144,11 @@ soundManager.setup({
           { "id": music.playlist[music.previous].ID }
         );
       },
-      onstop: function() {
+      onstop() {
         $(`#sound${music.previous}`).attr("playing", false);
       },
       //Update the slider on playback
-      whileplaying: function() {
+      whileplaying() {
         if (music.sliderDrag === false) {
           music.slider.value = (this.position / this.durationEstimate) * 1000;
         }
