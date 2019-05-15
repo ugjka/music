@@ -75,11 +75,7 @@ func main() {
 				}
 				defer resp.Body.Close()
 				w.Header().Add("Content-Type", resp.Header.Get("Content-Type"))
-				_, err = io.Copy(w, resp.Body)
-				if err != nil {
-					http.Error(w, "filed to copy contents from proxy", http.StatusInternalServerError)
-					return
-				}
+				io.Copy(w, resp.Body)
 			})
 	}
 	mux.Handler("GET", "/count", pass.mustAuth(library.counts))
