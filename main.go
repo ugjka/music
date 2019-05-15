@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 
@@ -25,6 +26,8 @@ func main() {
 	enableFlac = flag.Bool("enableFlac", false, "Enable Flac streaming")
 	port := flag.Uint("port", 8080, "Server Port")
 	path := flag.String("path", "./music", "Directory containing your mp3 files")
+	dev := flag.Bool("dev", false, "polymer dev mode")
+	devport := flag.Uint("devport", 20000, "polymer dev mode proxy port")
 	flag.Parse()
 	if *port > 65535 {
 		fmt.Fprintf(os.Stderr, "ERROR: Invalid port number\n")
@@ -59,7 +62,27 @@ func main() {
 	library.makeCache()
 
 	mux := httprouter.New()
-	mux.NotFound = http.FileServer(http.Dir("build/app/public"))
+
+	if !*dev {
+		mux.NotFound = http.FileServer(http.Dir("build/app/public"))
+	} else {
+		mux.NotFound = func() http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", *devport, r.RequestURI))
+				if err != nil {
+					http.Error(w, "content not found", http.StatusNotFound)
+					return
+				}
+				defer resp.Body.Close()
+				w.Header().Add("Content-Type", resp.Header.Get("Content-Type"))
+				_, err = io.Copy(w, resp.Body)
+				if err != nil {
+					http.Error(w, "filed to copy contents from proxy", http.StatusInternalServerError)
+					return
+				}
+			})
+		}()
+	}
 	mux.Handler("GET", "/count", pass.mustAuth(library.counts))
 	mux.Handler("GET", "/stream", pass.mustAuth(library.idcache))
 	mux.HandlerFunc("GET", "/art", artwork)
