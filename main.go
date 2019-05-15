@@ -66,8 +66,8 @@ func main() {
 	if !*dev {
 		mux.NotFound = http.FileServer(http.Dir("build/app/public"))
 	} else {
-		mux.NotFound = func() http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mux.NotFound = http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
 				resp, err := http.Get(fmt.Sprintf("http://localhost:%d%s", *devport, r.RequestURI))
 				if err != nil {
 					http.Error(w, "content not found", http.StatusNotFound)
@@ -81,7 +81,6 @@ func main() {
 					return
 				}
 			})
-		}()
 	}
 	mux.Handler("GET", "/count", pass.mustAuth(library.counts))
 	mux.Handler("GET", "/stream", pass.mustAuth(library.idcache))
