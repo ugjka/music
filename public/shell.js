@@ -69,7 +69,7 @@ document.getElementById("menubutton").addEventListener("click", () => { startDra
 //Sorter
 document.getElementById("startDrawer").addEventListener("change", e => {
   if (e.target && e.target.nodeName == "PAPER-BUTTON") {
-    var sorters = document.getElementsByClassName("sorter");
+    let sorters = document.getElementsByClassName("sorter");
     for (let i = 0; sorters.length > i; i++) {
       sorters[i].active = false;
     }
@@ -209,7 +209,7 @@ function loginNow() {
 }
 
 document.getElementById("playlist").addEventListener('click', e => {
-  var closest = e.target.closest("TR");
+  let closest = e.target.closest("TR");
   if (closest) {
     music.previous = music.current;
     music.current = closest.getAttribute("index");
