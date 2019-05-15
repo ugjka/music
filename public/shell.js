@@ -33,16 +33,16 @@ const music = {
     for (let i = 0; i < this.playlist.length; i++) {
       let albumPrint = "";
       if (this.playlist[i].Track != 0) {
-        albumPrint = ["<td class='album'>[", this.playlist[i].Track, "]", " ", this.playlist[i].Album, "</td>"].join("");
+        albumPrint = `<td class='album'>[${this.playlist[i].Track}] ${this.playlist[i].Album}</td>`;
       } else {
         albumPrint = "<td class='album'></td>";
       }
       playlist.push(
-        "<tr id='sound", i, "' class='song' index='", i, "'>",
-        "<td class='title'>", this.playlist[i].Title, "</td>",
-        "<td class='artist'>", this.playlist[i].Artist, "</td>",
+        `<tr id='sound${i}' class='song' index='${i}'>`,
+        `<td class='title'>${this.playlist[i].Title}</td>`,
+        `<td class='artist'>${this.playlist[i].Artist}</td>`,
         albumPrint,
-        "</tr>"
+        `</tr>`
       );
     }
     $("#playlist").append(playlist.join(""));
@@ -150,12 +150,12 @@ soundManager.setup({
         playSong(music.current);
         //Count the play
         $.get(
-          [music.url, "/count"].join(""),
+          `${music.url}/count`,
           { "id": music.playlist[music.previous].ID }
         );
       },
       onstop: function() {
-        $(["#sound", music.previous].join("")).attr("playing", false);
+        $(`#sound${music.previous}`).attr("playing", false);
       },
       //Update the slider on playback
       whileplaying: function() {
@@ -186,7 +186,7 @@ if ('mediaSession' in navigator) {
   });
 }
 //Handle login
-$.post([music.url, "/login"].join(""), { password: "", secret: $.cookie("secret") },
+$.post(`${music.url}/login`, { password: "", secret: $.cookie("secret") },
   function(data) {
     if (data === false) {
       login.open();
@@ -212,7 +212,7 @@ function loginNow() {
     $("#passwordWrong").append("Enter the password");
     return;
   }
-  $.post([music.url, "/login"].join(""), { password: pass },
+  $.post(`${music.url}/login`, { password: pass },
     function(data) {
       if (data === false) {
         login.open();
@@ -241,23 +241,23 @@ function playSong(id) {
     music.mainSound.stop();
   }
   music.mainSound.unload();
-  $(["#sound", id].join("")).attr("playing", true);
-  music.mainSound.url = [music.url, "/stream?id=", music.playlist[id].ID].join("");
+  $(`#sound${id}`).attr("playing", true);
+  music.mainSound.url = `${music.url}/stream?id=${music.playlist[id].ID}`;
   music.mainSound.play();
-  document.getElementsByTagName("body")[0].style.backgroundImage = ["url(", music.url, "/art?id=", music.playlist[id].ID, ")"].join("");
+  document.getElementsByTagName("body")[0].style.backgroundImage = `url(${music.url}/art?id=${music.playlist[id].ID})`;
   //Set up media session data
   if ('mediaSession' in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: music.playlist[music.current].Title,
       artist: music.playlist[music.current].Artist,
       album: music.playlist[music.current].Album,
-      artwork: [{ src: [music.url, "/art?id=", music.playlist[id].ID].join(""), }],
+      artwork: [{ src: `${music.url}/art?id=${music.playlist[id].ID}` }],
     });
   }
-  document.title = [music.playlist[music.current].Title, "by", music.playlist[music.current].Artist].join(" ");
+  document.title = `${music.playlist[music.current].Title} by ${music.playlist[music.current].Artist}`;
   //Get if liked or not
   $.get(
-    [music.url, "/like"].join(""),
+    `${music.url}/like`,
     { "id": music.playlist[id].ID },
     function(data) {
       document.getElementById("favoriteit").setAttribute("favorited", data);
