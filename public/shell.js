@@ -16,7 +16,7 @@ import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-input/paper-input.js';
 
 //Main object
-var music = {
+const music = {
   selected: "byartist",
   sort: new Event('sort'),
   playlist: null,
@@ -29,9 +29,9 @@ var music = {
   //Render the playlist
   render: function() {
     $("#playlist").empty();
-    var playlist = [""];
-    for (var i = 0; i < this.playlist.length; i++) {
-      var albumPrint = "";
+    let playlist = [""];
+    for (let i = 0; i < this.playlist.length; i++) {
+      let albumPrint = "";
       if (this.playlist[i].Track != 0) {
         albumPrint = ["<td class='album'>[", this.playlist[i].Track, "]", " ", this.playlist[i].Album, "</td>"].join("");
       } else {
@@ -52,7 +52,7 @@ var music = {
 //
 // Set up stuff
 //
-console.log('webcomponents are ready!!!');
+
 //Slider events
 music.slider = document.getElementById("slider");
 slider.addEventListener("mousedown", function() {
@@ -62,7 +62,7 @@ slider.addEventListener("mouseup", function() {
   music.sliderDrag = false;
 });
 slider.addEventListener("change", function(e) {
-  var estimate = music.mainSound.durationEstimate;
+  let estimate = music.mainSound.durationEstimate;
   music.mainSound.setPosition((estimate / 1000) * e.target.value);
   music.sliderDrag = false;
 });
@@ -73,7 +73,7 @@ document.getElementById("menubutton").addEventListener("click", function() {
 document.getElementById("startDrawer").addEventListener("change", function(e) {
   if (e.target && e.target.nodeName == "PAPER-BUTTON") {
     var sorters = document.getElementsByClassName("sorter");
-    for (var i = 0; sorters.length > i; i++) {
+    for (let i = 0; sorters.length > i; i++) {
       sorters[i].active = false;
     }
     music.selected = e.target.id.replace("post-", "");
@@ -206,7 +206,7 @@ document.getElementById("passwordEnter").addEventListener("click", function() {
 });
 
 function loginNow() {
-  var pass = passwordInput.value;
+  let pass = passwordInput.value;
   if (pass === undefined) {
     $("#passwordWrong").empty();
     $("#passwordWrong").append("Enter the password");
