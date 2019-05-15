@@ -10,7 +10,10 @@
    "css/*"
   ],
   "extraDependencies": [
-    "node_modules/@webcomponents/webcomponentsjs/**"
+    "node_modules/@webcomponents/webcomponentsjs/**",
+    "node_modules/soundmanager2/script/soundmanager2.js",
+  	"node_modules/jquery/dist/jquery.js",
+  	"node_modules/jquery.cookie/jquery.cookie.js"
   ],
   "moduleResolution": "node",
   "npm": true,
