@@ -2,6 +2,11 @@
   ugjka <esesmu@protonmail.com>
 */
 
+html {
+  height:100%;
+  min-height:100%;
+}
+
 body {
   margin: 0;
   margin-left: 5px;
