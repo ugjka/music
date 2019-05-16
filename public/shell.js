@@ -16,6 +16,7 @@ import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-input/paper-input.js';
 // Split this
 import $ from './js/jquery.module.js';
+import soundManager from './js/sm2.module.js';
 import CookieMonster from '@firstandthird/cookie-monster';
 
 //Main object
