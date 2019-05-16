@@ -14,6 +14,9 @@ import '@polymer/paper-button/paper-button.js';
 import '@polymer/iron-icons/av-icons.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-input/paper-input.js';
+// Split this
+import $ from './js/jquery.module.js';
+import CookieMonster from '@firstandthird/cookie-monster';
 
 //Main object
 const music = {
@@ -101,7 +104,7 @@ document.getElementById("focus").addEventListener("click", () => {
 });
 // Logout handler
 document.getElementById("logout").addEventListener("click", () => {
-  $.removeCookie('secret');
+  CookieMonster.remove('secret');
   location.reload();
 });
 //Sort event handler
@@ -168,11 +171,11 @@ if ('mediaSession' in navigator) {
   navigator.mediaSession.setActionHandler('pause', () => { pause(); });
 }
 //Handle login
-$.post(`${music.url}/login`, { password: "", secret: $.cookie("secret") },
+$.post(`${music.url}/login`, { password: "", secret: CookieMonster.get("secret") },
   data => {
     if (data === false) {
       login.open();
-    } else if ($.cookie("secret") == "pp9zzKI6msXItWfcGFp1bpfJghZP4lhZ4NHcwUdcgKYVshI68fX5TBHj6UAsOsVY9QAZnZW20-MBdYWGKB3NJg==") {
+    } else if (CookieMonster.get("secret") == "pp9zzKI6msXItWfcGFp1bpfJghZP4lhZ4NHcwUdcgKYVshI68fX5TBHj6UAsOsVY9QAZnZW20-MBdYWGKB3NJg==") {
       document.getElementById("logout").style.display = "none";
     }
   },

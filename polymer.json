@@ -11,9 +11,7 @@
   ],
   "extraDependencies": [
     "node_modules/@webcomponents/webcomponentsjs/**",
-    "node_modules/soundmanager2/script/soundmanager2.js",
-  	"node_modules/jquery/dist/jquery.js",
-  	"node_modules/jquery.cookie/jquery.cookie.js"
+    "node_modules/soundmanager2/script/soundmanager2.js"
   ],
   "moduleResolution": "node",
   "npm": true,
