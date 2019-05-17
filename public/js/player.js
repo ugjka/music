@@ -59,7 +59,7 @@ const music = {
     let playlist = [""];
     for (let i = 0; i < this.playlist.length; i++) {
       let albumPrint = "";
-      if (this.playlist[i].Track != 0) {
+      if ((this.playlist[i].Track != 0) && (this.playlist[i].Album != "")) {
         albumPrint = `<td class='album'>[${this.playlist[i].Track}] ${this.playlist[i].Album}</td>`;
       } else {
         albumPrint = `<td class='album'>${this.playlist[i].Album}</td>`;
