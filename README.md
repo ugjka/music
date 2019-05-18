@@ -3,7 +3,7 @@
 [![Donate](https://dl.ugjka.net/Donate-PayPal-green.svg)](https://www.paypal.me/ugjka)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fugjka%2Fmusic.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fugjka%2Fmusic?ref=badge_shield)
 
-Stream your god damned music hassle free
+Stream your god damned mp3 (and flac?) music hassle free
 
 ## Demo
 
