@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/dhowden/tag"
+	"github.com/ugjka/tag"
 )
 
 //
