@@ -51,3 +51,7 @@ Navigate in your browser to: `http://127.0.0.1:8080/`
 ## License
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fugjka%2Fmusic.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fugjka%2Fmusic?ref=badge_large)
+
+## The future of this project?
+
+When I get time and inspiration I'll try to work on the features listed in this link: https://github.com/ugjka/music/projects/1
